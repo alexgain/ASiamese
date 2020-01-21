@@ -413,7 +413,7 @@ class ASiameseNetworks(Module):
 
         self.classifier = ALinear(4096, 1, bias=False, datasets = tasks)            
         
-        self._weight_init()
+        # self._weight_init()
 
     def _weight_init(self):
         for m in self.modules():
@@ -509,13 +509,17 @@ class ASiameseNetworks2(Module):
         self.classifier = Sequential(
             Linear(4096, 1, bias=False)            
         )
-        # self._weight_init()
+        self._weight_init()
 
     def _weight_init(self):
         for m in self.modules():
-            if isinstance(m, Conv2d):
+            if isinstance(m, AConv2d):
                 m.weight.data.normal_(0, 1e-2)
                 m.bias.data.normal_(0.5, 1e-2)
+            elif isinstance(m, ALinear):
+                m.weight.data.normal_(0, 2.0 * 1e-1)
+                if m.bias is not None:
+                    m.bias.data.normal_(0.5, 1e-2)
             elif isinstance(m, Linear):
                 m.weight.data.normal_(0, 2.0 * 1e-1)
                 if m.bias is not None:
