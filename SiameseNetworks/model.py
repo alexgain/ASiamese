@@ -488,13 +488,13 @@ class ANet2(Module):
 
         self.classifier = Sequential(
             Flatten(),
-            Linear(n, 4096),
+            ALinear(n, 4096, datasets = tasks),
             Sigmoid()
         )
 
     def forward(self, x, task = 0):
         x = mod_forward(x, task, self.features)
-        x = self.classifier(x)
+        x = mod_forward(x, task, self.classifier)
         return x
 
 
@@ -504,10 +504,10 @@ class ASiameseNetworks2(Module):
         :param input_shape: input image shape, (h, w, c)
         """
         super(ASiameseNetworks2, self).__init__()
-        self.net = ANet2(input_shape, tasks = 1)
+        self.net = ANet2(input_shape, tasks = tasks)
 
         self.classifier = Sequential(
-            Linear(4096, 1, bias=False)            
+            ALinear(4096, 1, bias=False, datasets = tasks)            
         )
         self._weight_init()
 
@@ -531,7 +531,8 @@ class ASiameseNetworks2(Module):
         x2 = self.net(x2,task)
         # L1 component-wise distance between vectors:
         x = torch.pow(torch.abs(x1 - x2), 2.0)
-        return self.classifier(x)
+        x = mod_forward(x, task, self.classifier)
+        return x
 
 
 
