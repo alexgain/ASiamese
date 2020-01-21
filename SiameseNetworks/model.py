@@ -448,7 +448,7 @@ def mod_forward(x, task, seq):
         try:
             x = y(x,dataset=task)
         except Exception as e:
-            print("DatasetError: {}".format(e))
+            # print("DatasetError: {}".format(e))
             x = y(x)
     return x           
 
