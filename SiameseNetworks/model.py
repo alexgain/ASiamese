@@ -426,8 +426,8 @@ class ASiameseNetworks(Module):
                     m.bias.data.normal_(0.5, 1e-2)
 
     def forward(self, x1, x2, task = 1):
-        x1 = self.net(x1, dataset = task)
-        x2 = self.net(x2, dataset = task)
+        x1 = self.net(x1, task)
+        x2 = self.net(x2, task)
         # L1 component-wise distance between vectors:
         x = torch.pow(torch.abs(x1 - x2), 2.0)
-        return self.classifier(x, dataset = task)
+        return self.classifier(x, task)
