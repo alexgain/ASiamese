@@ -447,7 +447,8 @@ def mod_forward(x, task, seq):
     for y in list(seq):
         try:
             x = y(x,task=task)
-        except:
+        except Exception as e:
+            print("DatasetError: {}".format(e))
             x = y(x)
     return x           
 
