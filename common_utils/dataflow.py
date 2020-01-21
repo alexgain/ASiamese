@@ -8,7 +8,7 @@ import cv2
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataloader import _DataLoaderIter as DataLoaderIter#, string_classes
-from torch._six import queue, string_classes
+from torch._six import string_classes
 
 
 class ProxyDataset(Dataset):
