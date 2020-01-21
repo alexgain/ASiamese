@@ -167,7 +167,7 @@ for i in range(len(data_by_alph)):
 # ################# Setup model and optimization algorithm ######################
 
 # siamese_net = SiameseNetworks(input_shape=(105, 105, 1))
-siamese_net = ASiameseNetworks2(input_shape=(105, 105, 1))
+siamese_net = ASiameseNetworks2(input_shape=(105, 105, 1),tasks = len(data_by_alph))
 if HAS_GPU and torch.cuda.is_available():
     siamese_net = siamese_net.cuda()
 
@@ -216,14 +216,14 @@ write_csv_log(logs_path, "epoch,train_loss,train_acc,val_loss,val_acc")
 best_acc = 0.0
 for k in range(len(data_by_alph)):
     for epoch in range(conf['n_epochs']):
-        scheduler.step()
+        # scheduler.step()
         # Verbose learning rates:
         print(verbose_optimizer(optimizer))
     
         # train for one epoch
         ret = train_one_epoch(siamese_net, train_batches[str(k)], 
                               criterion, optimizer,                                               
-                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,])
+                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k)
         if ret is None:
             break
         train_loss, train_acc = ret
@@ -234,7 +234,7 @@ for k in range(len(data_by_alph)):
             break
         val_loss, val_acc = ret
         
-        onplateau_scheduler.step(val_loss)
+        # onplateau_scheduler.step(val_loss)
     
         # Write a csv log file
         write_csv_log(logs_path, "%i,%f,%f,%f,%f" % (epoch, train_loss, train_acc, val_loss, val_acc))
@@ -248,6 +248,6 @@ for k in range(len(data_by_alph)):
                              'val_acc': val_acc,           
                              'optimizer': optimizer.state_dict()})
 
-for k2 in range(len(data_by_alph)):
-    print("Val on task",k2,":")
-    ret = validate(siamese_net, val_batches[str(k2)], criterion, avg_metrics=[accuracy_logits, ])
+    for k2 in range(len(data_by_alph)):
+        print("Val on task",k2,":")
+        ret = validate(siamese_net, val_batches[str(k2)], criterion, avg_metrics=[accuracy_logits, ])
