@@ -444,7 +444,7 @@ class ASiameseNetworks(Module):
 
 
 def mod_forward(x, task, seq):
-    for y in seq:
+    for y in list(seq):
         try:
             x = y(x,task=task)
         except:
