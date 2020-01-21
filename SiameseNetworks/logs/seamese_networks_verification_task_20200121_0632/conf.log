@@ -1,0 +1,10 @@
+{'weight_decay': 0.01, 'lr_features': 6e-05, 'lr_classifier': 8e-05, 'n_epochs': 50, 'gamma': 0.77}
+
+Optimizer: Adam
+- Param group: 
+	lr: 0.001
+	betas: (0.9, 0.999)
+	eps: 1e-08
+	weight_decay: 0
+	amsgrad: False
+
