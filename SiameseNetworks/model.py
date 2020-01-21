@@ -348,9 +348,9 @@ class ANet(Module):
         # Compute number of input features for the last fully-connected layer
         input_shape = (1,) + input_shape[::-1]
         x = Variable(torch.rand(input_shape), requires_grad=False)
-        x = self.mp1(self.relu(self.conv1(x, task=0)))
-        x = self.mp2(self.relu(self.conv2(x, task=0)))
-        x = self.mp3(self.relu(self.conv3(x, task=0)))
+        x = self.mp1(self.relu(self.conv1(x, 0)))
+        x = self.mp2(self.relu(self.conv2(x, 0)))
+        x = self.mp3(self.relu(self.conv3(x, 0)))
         x = self.relu(self.conv4(x, 0))
 
         x = Flatten()(x)
