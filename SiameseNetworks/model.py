@@ -324,6 +324,50 @@ class Net(Module):
         return x
 
 
+
+class ANet(Module):
+    def __init__(self, input_shape, tasks = 1):
+        """
+        :param input_shape: input image shape, (h, w, c)
+        """
+        super(ANet, self).__init__()
+
+        self.conv1 = AConv2d(input_shape[-1], 64, kernel_size=10, datasets = tasks),
+        self.mp1 = MaxPool2d(kernel_size=(2, 2), stride=2),
+
+        self.conv2 = AConv2d(64, 128, kernel_size=7, datasets = tasks),
+        self.mp2 = MaxPool2d(kernel_size=(2, 2), stride=2),
+
+        self.conv3 = AConv2d(128, 128, kernel_size=4, datasets = tasks),
+        self.mp3 = MaxPool2d(kernel_size=(2, 2), stride=2),
+
+        self.conv4 = AConv2d(128, 256, kernel_size=4, datasets = tasks)
+        
+        self.relu = nn.ReLU()
+        
+        # Compute number of input features for the last fully-connected layer
+        input_shape = (1,) + input_shape[::-1]
+        x = Variable(torch.rand(input_shape), requires_grad=False)
+        x = self.features(x)
+        x = Flatten()(x)
+        n = x.size()[1]
+
+        self.linear = ALinear(n, 4096, datasets = tasks)
+        self.sm = Sigmoid()
+
+    def forward(self, x, task = 0):
+        
+        x = self.mp1(self.relu(self.conv1(x, task)))
+        x = self.mp2(self.relu(self.conv2(x, task)))
+        x = self.mp3(self.relu(self.conv3(x, task)))
+        x = self.relu(self.conv4(x, task))
+        x = x.view(x.size(0), -1)
+        x = self.linear(x, task)
+        x = self.sm(x)
+        
+        return x
+
+
 class SiameseNetworks(Module):
     def __init__(self, input_shape):
         """
@@ -353,3 +397,33 @@ class SiameseNetworks(Module):
         # L1 component-wise distance between vectors:
         x = torch.pow(torch.abs(x1 - x2), 2.0)
         return self.classifier(x)
+
+
+class ASiameseNetworks(Module):
+    def __init__(self, input_shape, tasks = 1):
+        """
+        :param input_shape: input image shape, (h, w, c)
+        """
+        super(ASiameseNetworks, self).__init__()
+        self.net = ANet(input_shape)
+
+        self.classifier = ALinear(4096, 1, bias=False, datasets = tasks)            
+        
+        self._weight_init()
+
+    def _weight_init(self):
+        for m in self.modules():
+            if isinstance(m, AConv2d):
+                m.weight.data.normal_(0, 1e-2)
+                m.bias.data.normal_(0.5, 1e-2)
+            elif isinstance(m, ALinear):
+                m.weight.data.normal_(0, 2.0 * 1e-1)
+                if m.bias is not None:
+                    m.bias.data.normal_(0.5, 1e-2)
+
+    def forward(self, x1, x2, task = 1):
+        x1 = self.net(x1, dataset = task)
+        x2 = self.net(x2, dataset = task)
+        # L1 component-wise distance between vectors:
+        x = torch.pow(torch.abs(x1 - x2), 2.0)
+        return self.classifier(x, dataset = task)
