@@ -446,7 +446,7 @@ class ASiameseNetworks(Module):
 def mod_forward(x, task, seq):
     for y in list(seq):
         try:
-            x = y(x,task=task)
+            x = y(x,dataset=task)
         except Exception as e:
             print("DatasetError: {}".format(e))
             x = y(x)
