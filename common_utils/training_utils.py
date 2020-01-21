@@ -44,7 +44,7 @@ def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs,
                 # compute output and measure loss
                 # batch_x = torch.cat([batch_x[0],batch_x[1]],dim=1)
                 # batch_y_pred = model(batch_x,task=0)
-                batch_y_pred = model(*batch_x)
+                batch_y_pred = model(*batch_x, task = 0)
                 loss = criterion(batch_y_pred, batch_y)
                 average_meters[0].update(loss.data.item(), batch_size)
 
@@ -109,7 +109,7 @@ def validate(model, val_batches, criterion, avg_metrics=None, full_data_metrics=
                 # compute output and measure loss
                 # batch_x = torch.cat([batch_x[0],batch_x[1]],dim=1)
                 # batch_y_pred = model(batch_x,task=0)
-                batch_y_pred = model(*batch_x)
+                batch_y_pred = model(*batch_x, task = 0)
                 loss = criterion(batch_y_pred, batch_y)
                 average_meters[0].update(loss.data.item(), batch_size)
 
