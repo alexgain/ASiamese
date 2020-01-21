@@ -413,7 +413,7 @@ class ASiameseNetworks(Module):
 
         self.classifier = ALinear(4096, 1, bias=False, datasets = tasks)            
         
-        self._weight_init()
+        # self._weight_init()
 
     def _weight_init(self):
         for m in self.modules():
