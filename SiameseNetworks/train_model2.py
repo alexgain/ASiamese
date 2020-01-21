@@ -248,6 +248,6 @@ for k in range(len(data_by_alph)):
                              'val_acc': val_acc,           
                              'optimizer': optimizer.state_dict()})
 
-        for k2 in range(len(data_by_alph)):
-            print("Val on task",k2,":")
-            ret = validate(siamese_net, val_batches[str(k2)], criterion, avg_metrics=[accuracy_logits, ])
+for k2 in range(len(data_by_alph)):
+    print("Val on task",k2,":")
+    ret = validate(siamese_net, val_batches[str(k2)], criterion, avg_metrics=[accuracy_logits, ])
