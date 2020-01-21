@@ -151,8 +151,8 @@ test_batches = _DataLoader(test_aug_pairs, batch_size=conf['batch_size'],
 
 # ################# Setup model and optimization algorithm ######################
 
-siamese_net = SiameseNetworks(input_shape=(105, 105, 1))
-# siamese_net = ASiameseNetworks2(input_shape=(105, 105, 1))
+# siamese_net = SiameseNetworks(input_shape=(105, 105, 1))
+siamese_net = ASiameseNetworks2(input_shape=(105, 105, 1))
 if HAS_GPU and torch.cuda.is_available():
     siamese_net = siamese_net.cuda()
 
