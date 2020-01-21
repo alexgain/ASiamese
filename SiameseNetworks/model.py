@@ -443,38 +443,40 @@ class ASiameseNetworks(Module):
 #############
 
 
+def mod_forward(x, task, seq):
+    for y in seq:
+        try:
+            x = y(x,task=task)
+        except:
+            x = y(x)
+    return x           
+
 class ANet2(Module):
-    def __init__(self, input_shape):
+    def __init__(self, input_shape, tasks=1):
         """
         :param input_shape: input image shape, (h, w, c)
         """
         super(ANet2, self).__init__()
 
         self.features = Sequential(
-            AConv2d(input_shape[-1], 64, kernel_size=10),
+            AConv2d(input_shape[-1], 64, kernel_size=10, datasets = tasks),
             ReLU(),
             MaxPool2d(kernel_size=(2, 2), stride=2),
 
-            AConv2d(64, 128, kernel_size=7),
+            AConv2d(64, 128, kernel_size=7, datasets = tasks),
             ReLU(),
             MaxPool2d(kernel_size=(2, 2), stride=2),
 
-            AConv2d(128, 128, kernel_size=4),
+            AConv2d(128, 128, kernel_size=4, datasets = tasks),
             ReLU(),
             MaxPool2d(kernel_size=(2, 2), stride=2),
 
-            AConv2d(128, 256, kernel_size=4),
+            AConv2d(128, 256, kernel_size=4, datasets = tasks),
             ReLU()
         )
         
-        def mod_forward(x, task, seq):
-            for y in seq:
-                try:
-                    x = y(x,task=task)
-                except:
-                    x = y(x)
-            return x                                                        
-        self.features.forward = mod_forward
+                                             
+        # self.features.forward = mod_forward
 
         # Compute number of input features for the last fully-connected layer
         input_shape = (1,) + input_shape[::-1]
@@ -489,19 +491,19 @@ class ANet2(Module):
             Sigmoid()
         )
 
-    def forward(self, x):
-        x = self.features(x)
+    def forward(self, x, task = 0):
+        x = mod_forward(x, task, self.features)
         x = self.classifier(x)
         return x
 
 
 class ASiameseNetworks2(Module):
-    def __init__(self, input_shape):
+    def __init__(self, input_shape, tasks = 1):
         """
         :param input_shape: input image shape, (h, w, c)
         """
-        super(SiameseNetworks, self).__init__()
-        self.net = Net(input_shape)
+        super(ASiameseNetworks2, self).__init__()
+        self.net = ANet2(input_shape, tasks = 1)
 
         self.classifier = Sequential(
             Linear(4096, 1, bias=False)            
@@ -518,9 +520,9 @@ class ASiameseNetworks2(Module):
                 if m.bias is not None:
                     m.bias.data.normal_(0.5, 1e-2)
 
-    def forward(self, x1, x2):
-        x1 = self.net(x1)
-        x2 = self.net(x2)
+    def forward(self, x1, x2, task=0):
+        x1 = self.net(x1,task)
+        x2 = self.net(x2,task)
         # L1 component-wise distance between vectors:
         x = torch.pow(torch.abs(x1 - x2), 2.0)
         return self.classifier(x)
