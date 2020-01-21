@@ -332,14 +332,14 @@ class ANet(Module):
         """
         super(ANet, self).__init__()
 
-        self.conv1 = AConv2d(input_shape[-1], 64, kernel_size=10, datasets = tasks),
-        self.mp1 = MaxPool2d(kernel_size=(2, 2), stride=2),
+        self.conv1 = AConv2d(input_shape[-1], 64, kernel_size=10, datasets = tasks)
+        self.mp1 = MaxPool2d(kernel_size=(2, 2), stride=2)
 
-        self.conv2 = AConv2d(64, 128, kernel_size=7, datasets = tasks),
-        self.mp2 = MaxPool2d(kernel_size=(2, 2), stride=2),
+        self.conv2 = AConv2d(64, 128, kernel_size=7, datasets = tasks)
+        self.mp2 = MaxPool2d(kernel_size=(2, 2), stride=2)
 
-        self.conv3 = AConv2d(128, 128, kernel_size=4, datasets = tasks),
-        self.mp3 = MaxPool2d(kernel_size=(2, 2), stride=2),
+        self.conv3 = AConv2d(128, 128, kernel_size=4, datasets = tasks)
+        self.mp3 = MaxPool2d(kernel_size=(2, 2), stride=2)
 
         self.conv4 = AConv2d(128, 256, kernel_size=4, datasets = tasks)
         
@@ -348,9 +348,9 @@ class ANet(Module):
         # Compute number of input features for the last fully-connected layer
         input_shape = (1,) + input_shape[::-1]
         x = Variable(torch.rand(input_shape), requires_grad=False)
-        x = self.mp1(self.relu(self.conv1(x, 0)))
-        x = self.mp2(self.relu(self.conv2(x, 0)))
-        x = self.mp3(self.relu(self.conv3(x, 0)))
+        x = self.mp1(self.relu(self.conv1(x, task=0)))
+        x = self.mp2(self.relu(self.conv2(x, task=0)))
+        x = self.mp3(self.relu(self.conv3(x, task=0)))
         x = self.relu(self.conv4(x, 0))
 
         x = Flatten()(x)
