@@ -215,6 +215,8 @@ write_csv_log(logs_path, "epoch,train_loss,train_acc,val_loss,val_acc")
 
 best_acc = 0.0
 for k in range(len(data_by_alph)):
+    print("#### Current Task ####",k)
+    print()
     for epoch in range(conf['n_epochs']):
         # scheduler.step()
         # Verbose learning rates:
