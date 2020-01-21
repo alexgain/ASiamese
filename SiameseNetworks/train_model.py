@@ -28,7 +28,7 @@ from common_utils.training_utils import train_one_epoch, validate, write_csv_log
 from common_utils.training_utils import accuracy
 
 from dataflow import OmniglotDataset, SameOrDifferentPairsDataset, PairTransformedDataset
-from model import SiameseNetworks, ASiameseNetworks
+from model import SiameseNetworks, ASiameseNetworks, ASiameseNetworks2
 
 
 HAS_GPU = True
@@ -152,7 +152,7 @@ test_batches = _DataLoader(test_aug_pairs, batch_size=conf['batch_size'],
 # ################# Setup model and optimization algorithm ######################
 
 # siamese_net = SiameseNetworks(input_shape=(105, 105, 1))
-siamese_net = ASiameseNetworks(input_shape=(105, 105, 1))
+siamese_net = ASiameseNetworks2(input_shape=(105, 105, 1))
 if HAS_GPU and torch.cuda.is_available():
     siamese_net = siamese_net.cuda()
 
@@ -165,12 +165,23 @@ criterion = BCEWithLogitsLoss()
 if HAS_GPU and torch.cuda.is_available():
     criterion = criterion.cuda()
 
+# optimizer = Adam([{
+#     'params': siamese_net.parameters(),
+#     'lr': conf['lr_features'],    
+# }], 
+#     weight_decay=conf['weight_decay']
+# )
+    
+
 optimizer = Adam([{
-    'params': siamese_net.parameters(),
+    'params': siamese_net.net.features.parameters(),
     'lr': conf['lr_features'],    
-}], 
+}, {
+    'params': siamese_net.classifier.parameters(),
+    'lr': conf['lr_classifier']
+}],
     weight_decay=conf['weight_decay']
-)
+)    
 
 # lr <- lr_init * gamma ** epoch
 scheduler = ExponentialLR(optimizer, gamma=conf['gamma'])
