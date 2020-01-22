@@ -152,15 +152,15 @@ for i in range(len(data_by_alph)):
     test_aug_pairs = PairTransformedDataset(test_data_by_alph[i], x_transforms=test_data_aug, y_transforms=y_transform)
 
     train_batches[str(i)] = _DataLoader(train_aug_pairs, batch_size=conf['batch_size'], 
-                                shuffle=True, num_workers=5, 
+                                shuffle=True, num_workers=0, 
                                 drop_last=True)    
 
     val_batches[str(i)] = _DataLoader(val_aug_pairs, batch_size=conf['batch_size'],
-                              shuffle=True, num_workers=conf['num_workers'],
+                              shuffle=True, num_workers=0,
                               pin_memory=True, drop_last=True)
     
     test_batches[str(i)] = _DataLoader(test_aug_pairs, batch_size=conf['batch_size'], 
-                               shuffle=False, num_workers=conf['num_workers'],                   
+                               shuffle=False, num_workers=0,                   
                                pin_memory=True, drop_last=False)
     
 
