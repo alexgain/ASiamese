@@ -244,7 +244,7 @@ for k in range(len(data_by_alph)):
         # train for one epoch
         ret = train_one_epoch(siamese_net, train_batches[str(k)], 
                               criterion, optimizer,                                               
-                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k, epoch = epoch)
+                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k)
         if ret is None:
             break
         train_loss, train_acc = ret

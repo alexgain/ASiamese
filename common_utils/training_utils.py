@@ -7,7 +7,7 @@ import torch
 from torch.autograd import Variable
 
 
-def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs, avg_metrics=None, task=0, epoch=0):
+def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs, avg_metrics=None, task=0):
     """
     :param model: class derived from nn.Module
     :param train_batches: instance of DataLoader
