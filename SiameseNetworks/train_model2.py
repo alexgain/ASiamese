@@ -47,7 +47,7 @@ conf = {
     'lr_features': 0.00006,
     'lr_classifier': 0.00006,
     
-    'n_epochs': 75,
+    'n_epochs': 30,
     'batch_size': 32,
     'num_workers': 15,
     
@@ -118,9 +118,9 @@ for i in range(0,len(train_alphabets + test_alphabets)-1,2):
                              drawers_ids=all_drawers_ids)
     
     
-    pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(1000))
-    val_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(200))
-    test_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(200))
+    pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(2000))
+    val_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(600))
+    test_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(600))
     data_by_alph.append(pairs)
     val_data_by_alph.append(val_pairs)
     test_data_by_alph.append(test_pairs)
