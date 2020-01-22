@@ -28,7 +28,7 @@ from common_utils.training_utils import train_one_epoch, validate, write_csv_log
 from common_utils.training_utils import accuracy
 
 from dataflow import OmniglotDataset, SameOrDifferentPairsDataset, PairTransformedDataset
-from model import SiameseNetworks, ASiameseNetworks, ASiameseNetworks2
+from model import SiameseNetworks, ASiameseNetworks, ASiameseNetworks2, _prune
 
 
 HAS_GPU = True
@@ -42,7 +42,7 @@ conf = {
     'nb_val_pairs': 10000,
     'nb_test_pairs': 10000,
 
-    'weight_decay': 0,
+    'weight_decay': 1e-8,
     
     'lr_features': 0.00006,
     'lr_classifier': 0.00006,
@@ -245,7 +245,7 @@ for k in range(len(data_by_alph)):
         # train for one epoch
         ret = train_one_epoch(siamese_net, train_batches[str(k)], 
                               criterion, optimizer,                                               
-                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k)
+                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k, _prune)
         if ret is None:
             break
         train_loss, train_acc = ret

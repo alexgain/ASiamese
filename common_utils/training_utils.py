@@ -7,7 +7,7 @@ import torch
 from torch.autograd import Variable
 
 
-def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs, avg_metrics=None, task=0):
+def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs, avg_metrics=None, task=0, _prune=None):
     """
     :param model: class derived from nn.Module
     :param train_batches: instance of DataLoader
@@ -51,7 +51,7 @@ def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs,
                 loss = criterion(batch_y_pred, batch_y)
                 if epoch >= 30:
                     # loss += 0.01*model.adj_sparsity_loss(task=task)
-                    model.prune(p_para=0.85, task=task)
+                    _prune(model, task=task)
 
                 average_meters[0].update(loss.data.item(), batch_size)
 

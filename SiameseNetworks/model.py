@@ -539,12 +539,21 @@ class ASiameseNetworks2(Module):
 
         return Sum            
 
-    def prune(self, p_para=0.5, task=None):
-        for module in list(self.children()):
-            if hasattr(module,'l1_loss'):
-                mask = (module.soft_round(module.adjx[task]) > p_para).data
-                l = module.adjx[task]*mask.float()
-                module.adjx[task].data.copy_(l.data)
+def _prune(module, task):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        mask = (module.soft_round(module.adjx[task]) > 0.85).data
+        l = module.adjx[task]*mask.float()
+        module.adjx[task].data.copy_(l.data)
+    if hasattr(module, 'children'):
+        for submodule in module.children():
+            _prune(submodule, task)
+
+# def prune(self, p_para=0.5, task=None):
+#     for module in list(self.children()):
+#         if hasattr(module,'l1_loss'):
+#             mask = (module.soft_round(module.adjx[task]) > p_para).data
+#             l = module.adjx[task]*mask.float()
+#             module.adjx[task].data.copy_(l.data)
 
 
 
