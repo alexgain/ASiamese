@@ -189,15 +189,28 @@ if HAS_GPU and torch.cuda.is_available():
 # )
     
 
-optimizer = Adam([{
-    'params': siamese_net.net.features.parameters(),
-    'lr': conf['lr_features'],    
-}, {
-    'params': siamese_net.classifier.parameters(),
-    'lr': conf['lr_classifier']
-}],
-    weight_decay=conf['weight_decay']
-)    
+if torch.cuda.device_count() > 1:
+
+    optimizer = Adam([{
+        'params': siamese_net.module.net.features.parameters(),
+        'lr': conf['lr_features'],    
+    }, {
+        'params': siamese_net.module.classifier.parameters(),
+        'lr': conf['lr_classifier']
+    }],
+        weight_decay=conf['weight_decay']
+    )    
+    
+else:    
+    optimizer = Adam([{
+        'params': siamese_net.net.features.parameters(),
+        'lr': conf['lr_features'],    
+    }, {
+        'params': siamese_net.classifier.parameters(),
+        'lr': conf['lr_classifier']
+    }],
+        weight_decay=conf['weight_decay']
+    )    
 
 # lr <- lr_init * gamma ** epoch
 scheduler = ExponentialLR(optimizer, gamma=conf['gamma'])
@@ -231,7 +244,7 @@ for k in range(len(data_by_alph)):
         # train for one epoch
         ret = train_one_epoch(siamese_net, train_batches[str(k)], 
                               criterion, optimizer,                                               
-                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k)
+                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k, epoch = epoch)
         if ret is None:
             break
         train_loss, train_acc = ret
@@ -254,7 +267,8 @@ for k in range(len(data_by_alph)):
         #                     {'epoch': epoch + 1,
         #                      'state_dict': siamese_net.state_dict(),
         #                      'val_acc': val_acc,           
-        #                      'optimizer': optimizer.state_dict()})
+        #                      'optimizer': optimizer.state_dict()})            
+
 
     val_acc = 0
     val_loss = 0

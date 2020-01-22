@@ -531,6 +531,20 @@ class ASiameseNetworks2(Module):
         x = self.classifier(x,task)
         return x
 
+    def adj_sparsity_loss(self, task=None):
+        Sum = 0
+        for module in list(self.children()):
+            if hasattr(module,'l1_loss'):
+                Sum += module.l1_loss(dataset=task)
+
+        return Sum            
+
+    def prune(self, p_para=0.5, task=None):
+        for module in list(self.children()):
+            if hasattr(module,'l1_loss'):
+                mask = (module.soft_round(module.adjx[task]) > p_para).data
+                l = module.adjx[task]*mask.float()
+                module.adjx[task].data.copy_(l.data)
 
 
 
