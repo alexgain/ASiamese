@@ -42,7 +42,7 @@ conf = {
     'nb_val_pairs': 10000,
     'nb_test_pairs': 10000,
 
-    'weight_decay': 5e-3,
+    'weight_decay': 3e-3,
     
     'lr_features': 0.00006,
     'lr_classifier': 0.00006,
