@@ -48,7 +48,7 @@ conf = {
     'lr_classifier': 0.00006,
     
     'n_epochs': 40,
-    'batch_size': 4,
+    'batch_size': 64,
     'num_workers': 15,
     
     'gamma': 0.9,
