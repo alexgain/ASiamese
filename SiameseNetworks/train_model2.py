@@ -222,6 +222,7 @@ for k in range(len(data_by_alph)):
     print("#### Current Task ####",k)
     print()
     for epoch in range(conf['n_epochs']):
+        
         # scheduler.step()
         # Verbose learning rates:
         print(verbose_optimizer(optimizer))
