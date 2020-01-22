@@ -188,14 +188,14 @@ def _write_log(filename, line):
 
 
 def verbose_optimizer(optimizer):
-    msg = ''
-    # msg = "\nOptimizer: %s\n" % optimizer.__class__.__name__
-    # for pg in optimizer.param_groups:
-    #     msg += "- Param group: \n"
-    #     for k in pg:
-    #         if k == 'params':
-    #             continue
-    #         msg += "\t{}: {}\n".format(k, pg[k])
+    # msg = ''
+    msg = "\nOptimizer: %s\n" % optimizer.__class__.__name__
+    for pg in optimizer.param_groups:
+        msg += "- Param group: \n"
+        for k in pg:
+            if k == 'params':
+                continue
+            msg += "\t{}: {}\n".format(k, pg[k])
     return msg
 
 

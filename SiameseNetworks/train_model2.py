@@ -225,7 +225,7 @@ for k in range(len(data_by_alph)):
         
         # scheduler.step()
         # Verbose learning rates:
-        print(verbose_optimizer(optimizer))
+        # print(verbose_optimizer(optimizer))
     
         # train for one epoch
         ret = train_one_epoch(siamese_net, train_batches[str(k)], 
