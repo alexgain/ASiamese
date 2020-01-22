@@ -118,9 +118,9 @@ for i in range(0,len(train_alphabets + test_alphabets)-1,2):
                              drawers_ids=all_drawers_ids)
     
     
-    pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(1000))
-    val_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(200))
-    test_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(200))
+    pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(2000))
+    val_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(600))
+    test_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(600))
     data_by_alph.append(pairs)
     val_data_by_alph.append(val_pairs)
     test_data_by_alph.append(test_pairs)
@@ -170,7 +170,8 @@ for i in range(len(data_by_alph)):
 siamese_net = ASiameseNetworks2(input_shape=(105, 105, 1),tasks = len(data_by_alph))
 if HAS_GPU and torch.cuda.is_available():
     siamese_net = siamese_net.cuda()
-
+    if torch.cuda.device_count() > 1:
+        siamese_net = torch.nn.DataParallel(siamese_net)
 
 def accuracy_logits(y_logits, y_true):
     y_pred = sigmoid(y_logits).data
