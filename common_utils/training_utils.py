@@ -7,7 +7,7 @@ import torch
 from torch.autograd import Variable
 
 
-def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs, avg_metrics=None, task=0, _prune=None):
+def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs, avg_metrics=None, task=0, _prune=None, stop_boole = False):
     """
     :param model: class derived from nn.Module
     :param train_batches: instance of DataLoader
@@ -31,7 +31,8 @@ def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs,
     try:
         with get_tqdm(total=len(train_batches)) as pbar:
             for i, (batch_x, batch_y) in enumerate(train_batches):
-
+                if i>0 and stop_boole:
+                    break
                 assert torch.is_tensor(batch_y)
                 batch_size = batch_y.size(0)
 
@@ -72,7 +73,7 @@ def train_one_epoch(model, train_batches, criterion, optimizer, epoch, n_epochs,
                 # compute gradient and do optimizer step
                 optimizer.zero_grad()
                 loss.backward()
-                optimizer.step()
+                optimizer.step()                
 
         return [m.avg for m in average_meters]
     except KeyboardInterrupt:
