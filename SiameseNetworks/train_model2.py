@@ -219,7 +219,7 @@ val_acc_log = []
 val_loss_log = []
 
 for k in range(len(data_by_alph)):
-    print("#### Current Task ####",k)
+    print("===== Current Task ======",k)
     print()
     for epoch in range(conf['n_epochs']):
         
@@ -244,16 +244,16 @@ for k in range(len(data_by_alph)):
         # onplateau_scheduler.step(val_loss)
     
         # Write a csv log file
-        write_csv_log(logs_path, "%i,%f,%f,%f,%f" % (epoch, train_loss, train_acc, val_loss, val_acc))
+        # write_csv_log(logs_path, "%i,%f,%f,%f,%f" % (epoch, train_loss, train_acc, val_loss, val_acc))
         
         # remember best accuracy and save checkpoint
-        if val_acc > best_acc:
-            best_acc = max(val_acc, best_acc)
-            save_checkpoint(logs_path, 'val_acc', 
-                            {'epoch': epoch + 1,
-                             'state_dict': siamese_net.state_dict(),
-                             'val_acc': val_acc,           
-                             'optimizer': optimizer.state_dict()})
+        # if val_acc > best_acc:
+        #     best_acc = max(val_acc, best_acc)
+        #     save_checkpoint(logs_path, 'val_acc', 
+        #                     {'epoch': epoch + 1,
+        #                      'state_dict': siamese_net.state_dict(),
+        #                      'val_acc': val_acc,           
+        #                      'optimizer': optimizer.state_dict()})
 
     val_acc = 0
     val_loss = 0
@@ -265,9 +265,13 @@ for k in range(len(data_by_alph)):
         val_loss += val_loss_cur
     val_acc /= len(data_by_alph)
     val_loss /= len(data_by_alph)
-    val_acc_log.append(val_acc)
-    val_loss_log.append(val_loss)
+    val_acc_log.append(val_acc)    
+    val_loss_log.append(val_loss)    
     
+    print('==== Total validation Accuracy: ====',val_acc)
+                        
+          
+          
 val_acc = np.array(val_acc)
 val_loss = np.array(val_loss)
 np.save('val_acc.npy',val_acc)
