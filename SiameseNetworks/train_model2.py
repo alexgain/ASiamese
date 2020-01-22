@@ -236,7 +236,7 @@ for k in range(len(data_by_alph)):
         train_loss, train_acc = ret
     
         # evaluate on validation set
-        ret = validate(siamese_net, val_batches[str(k)], criterion, avg_metrics=[accuracy_logits, ])
+        ret = validate(siamese_net, val_batches[str(k)], criterion, avg_metrics=[accuracy_logits, ], task=k)
         if ret is None:
             break
         val_loss, val_acc = ret
@@ -259,7 +259,7 @@ for k in range(len(data_by_alph)):
     val_loss = 0
     for k2 in range(len(data_by_alph)):
         print("Val on task",k2,":")
-        ret = validate(siamese_net, val_batches[str(k2)], criterion, avg_metrics=[accuracy_logits, ])
+        ret = validate(siamese_net, val_batches[str(k2)], criterion, avg_metrics=[accuracy_logits, ], task=k2)
         val_loss_cur, val_acc_cur = ret
         val_acc += val_acc_cur
         val_loss += val_loss_cur
