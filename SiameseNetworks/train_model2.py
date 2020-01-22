@@ -273,7 +273,7 @@ for k in range(len(data_by_alph)):
     for k2 in range(len(data_by_alph)):
         ret = train_one_epoch(siamese_net, train_batches[str(k2)], 
                               criterion, optimizer,                                               
-                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k, _prune=_prune, stop_boole = True)
+                              epoch, conf['n_epochs'], avg_metrics=[accuracy_logits,],task=k2, _prune=_prune, stop_boole = True)
 
     val_acc = 0
     val_loss = 0
