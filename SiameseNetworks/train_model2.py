@@ -171,6 +171,7 @@ siamese_net = ASiameseNetworks2(input_shape=(105, 105, 1),tasks = len(data_by_al
 if HAS_GPU and torch.cuda.is_available():
     siamese_net = siamese_net.cuda()
     if torch.cuda.device_count() > 1:
+        print('Gpus:',torch.cuda.device_count())
         siamese_net = torch.nn.DataParallel(siamese_net)
 
 def accuracy_logits(y_logits, y_true):
