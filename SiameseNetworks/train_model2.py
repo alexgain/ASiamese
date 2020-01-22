@@ -118,7 +118,7 @@ for i in range(0,len(train_alphabets + test_alphabets)-1,2):
                              drawers_ids=all_drawers_ids)
     
     
-    pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(1000))
+    pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(2000))
     val_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(200))
     test_pairs = SameOrDifferentPairsDataset(ds, nb_pairs=int(200))
     data_by_alph.append(pairs)
