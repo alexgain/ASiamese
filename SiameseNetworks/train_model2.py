@@ -214,6 +214,10 @@ write_conf_log(logs_path, verbose_optimizer(optimizer))
 write_csv_log(logs_path, "epoch,train_loss,train_acc,val_loss,val_acc")
 
 best_acc = 0.0
+
+val_acc_log = []
+val_loss_log = []
+
 for k in range(len(data_by_alph)):
     print("#### Current Task ####",k)
     print()
@@ -250,6 +254,23 @@ for k in range(len(data_by_alph)):
                              'val_acc': val_acc,           
                              'optimizer': optimizer.state_dict()})
 
+    val_acc = 0
+    val_loss = 0
     for k2 in range(len(data_by_alph)):
         print("Val on task",k2,":")
         ret = validate(siamese_net, val_batches[str(k2)], criterion, avg_metrics=[accuracy_logits, ])
+        val_loss_cur, val_acc_cur = ret
+        val_acc += val_acc_cur
+        val_loss += val_loss_cur
+    val_acc /= len(data_by_alph)
+    val_loss /= len(data_by_alph)
+    val_acc_log.append(val_acc)
+    val_loss_log.append(val_loss)
+    
+val_acc = np.array(val_acc)
+val_loss = np.array(val_loss)
+np.save('val_acc.npy',val_acc)
+np.save('val_loss.npy',val_acc)
+
+
+
