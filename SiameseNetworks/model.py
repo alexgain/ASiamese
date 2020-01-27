@@ -137,7 +137,7 @@ def AconvLayer(in_channels, out_channels, keep_prob=0.0):
 import math
 
 class Classifier(nn.Module):
-    def __init__(self, layer_size=64, num_channels=1, keep_prob=1.0, image_size=28, tasks = 1):
+    def __init__(self, layer_size=64, output_shape=55, num_channels=1, keep_prob=1.0, image_size=28, tasks = 1):
         super(Classifier, self).__init__()
         """
         Build a CNN to produce embeddings
@@ -168,7 +168,7 @@ class Classifier(nn.Module):
         finalSize = int(math.floor(image_size / (2 * 2 * 2 * 2)))
         self.outSize = finalSize * finalSize * layer_size
 
-        self.linear = ALinear(self.outSize, 28*28, datasets=tasks)        
+        self.linear = ALinear(self.outSize, output_shape, datasets=tasks)        
 
         
         # self.linear = ALinear(self.outsize,1)
@@ -186,7 +186,7 @@ class Classifier(nn.Module):
 
         x = x.view(x.size()[0], -1)
         x = self.linear(x, dataset=task)
-        x = self.sm(x)
+        # x = self.sm(x)
         return x
 
 class Classifier2(nn.Module):
