@@ -95,11 +95,8 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         labels = labels.view(-1).cpu()
         outputs = net(images, task = task).cpu()
         _, predicted = torch.max(outputs.cpu().data, 1)
-        print(predicted)
-        print(labels)
         total += labels.size(0)
         correct += (predicted.float() == labels.float()).sum()
-        print(total,correct)
 
         loss_sum += loss_metric(outputs,labels).cpu()
     
