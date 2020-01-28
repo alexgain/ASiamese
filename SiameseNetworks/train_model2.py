@@ -105,7 +105,7 @@ for i in range(len(all_xy)):
     train_loader = torch.utils.data.DataLoader(train, batch_size=args.batch_size, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test, batch_size=args.batch_size, shuffle=False)
     
-    dataloaders.append([])
+    dataloaders.append([train_loader,test_loader])
 
 ## model and optimizer instantiations:
 net = Classifier(image_size = 105, output_shape=60, tasks=50)
