@@ -141,6 +141,7 @@ for j in range(len(dataloaders)):
         print()
     
     print("Test acc for all tasks:")
+    total_test_acc = 0
     for j2 in range(len(dataloaders)):
         print("Task:",j2)
         test_acc, test_loss = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2)
@@ -149,5 +150,9 @@ for j in range(len(dataloaders)):
         print("Test acc:",test_acc)
         print("Test loss:",test_loss)
         
+        total_test_acc += test_acc
+    
+    total_test_acc /= len(dataloaders)
+    print("Total test acc:",total_test_acc)
 
 
