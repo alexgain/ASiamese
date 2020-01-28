@@ -4,7 +4,7 @@ from torch.utils.data import Dataset, TensorDataset
 
 import torchvision
 import torchvision.transforms as transforms
-from torchvision.transforms import Compose, ToTensor, RandomAffine, RandomApply
+from torchvision.transforms import Compose, ToTensor, RandomAffine, RandomApply, Resize
 import torchvision.transforms.functional as F
 
 import sys
@@ -35,6 +35,7 @@ parser.add_argument('--optim', type=str, default='Adam', help='optimizer to use 
 parser.add_argument('--nhid', type=int, default=25, help='number of hidden units per layer (default: 25)')
 parser.add_argument('--tasks', default=50, type=int, help='no. of tasks')
 parser.add_argument('--hidden_size', default=64, type=int, help='hidden neurons')
+parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
 args = parser.parse_args()
 
 ## Getting Dataloaders for Omniglot:
@@ -92,14 +93,16 @@ class CustomTensorDataset(Dataset):
 
 
 train_data_aug = Compose([
+    Resize(size = args.im_size),
     RandomApply(
         [RandomAffine(degrees=(-10, 10), scale=(0.8, 1.2), translate=(0.05, 0.05))],
         p=0.5
     ),
-    ToTensor()
+    ToTensor(),
 ])
 
 test_data_aug = Compose([
+    Resize(size = args.im_size),
     ToTensor()
 ])
 
@@ -129,7 +132,7 @@ for i in range(len(all_xy)):
     dataloaders.append([train_loader,test_loader])
 
 ## model and optimizer instantiations:
-net = Classifier(image_size = 105, output_shape=60, tasks=50, layer_size=args.hidden_size)
+net = Classifier(image_size = args.im_size, output_shape=60, tasks=50, layer_size=args.hidden_size)
 if gpu_boole:
     net = net.cuda()
 optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
