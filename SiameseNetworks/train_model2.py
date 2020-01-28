@@ -6,6 +6,7 @@ import torchvision
 import torchvision.transforms as transforms
 from torchvision.transforms import Compose, ToTensor
 
+import sys
 sys.path.append("..")
 
 from common_utils.imgaug import RandomAffine, RandomApply
