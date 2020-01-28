@@ -62,8 +62,6 @@ for i in range(len(all_xy)):
 
     xtrain, xtest, ytrain, ytest = train_test_split(all_xy[i][0], all_xy[i][1], test_size=0.2)        
     xtrain, xtest = xtrain / xtrain.max(), xtest / xtest.max()
-    print(xtrain.min(),xtrain.max())
-    print(xtest.min(),xtest.max())
     
     xtrain = torch.Tensor(xtrain).float()
     xtest = torch.Tensor(xtest).float()
@@ -74,11 +72,8 @@ for i in range(len(all_xy)):
     
     train = torch.utils.data.TensorDataset(xtrain, ytrain)
     test = torch.utils.data.TensorDataset(xtest, ytest)
-    
-    train_loader = torch.utils.data.DataLoader(train, batch_size=args.batch_size, shuffle=True)
-    test_loader = torch.utils.data.DataLoader(test, batch_size=args.batch_size, shuffle=False)
-    
-    dataloaders.append([train_loader,test_loader])
+        
+    dataloaders.append([torch.utils.data.DataLoader(train, batch_size=args.batch_size, shuffle=True),torch.utils.data.DataLoader(test, batch_size=args.batch_size, shuffle=False)])
 
 ## model and optimizer instantiations:
 net = Classifier(image_size = 105, output_shape=60, tasks=50)
@@ -130,7 +125,6 @@ for j in range(len(dataloaders)):
             optimizer.zero_grad()
             outputs = net(x,task=j)
             loss = loss_metric(outputs,y)
-            print(loss)
             loss.backward()
             optimizer.step()
         
