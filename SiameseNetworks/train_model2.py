@@ -98,7 +98,9 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         total += labels.size(0)
         correct += (predicted.float() == labels.float()).sum().cpu().data.numpy().item()
 
-        loss_sum += loss_metric(outputs,labels).cpu()
+        loss_sum += loss_metric(outputs,labels).cpu().data.numpy().item()
+        
+        del images; del labels; del outputs; del _; del predicted;
     
     correct = np.float(correct)
     total = np.float(total)
@@ -108,7 +110,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
 
     acc = 100.0 * (np.float(correct) / np.float(total))
     loss = (loss_sum.cpu().data.numpy().item() / np.float(total))
-    del images; del labels; del outputs; del _; del predicted; del total; del correct; del loss_sum
+    del total; del correct; del loss_sum
     return acc, loss
     
 ## Task Loop:
@@ -122,7 +124,6 @@ for j in range(3,len(dataloaders)):
 
         for i, (x,y) in enumerate(train_loader):
             
-            print(i)
             if gpu_boole:
                 x, y = x.cuda(), y.cuda()
                 
@@ -137,7 +138,6 @@ for j in range(3,len(dataloaders)):
             
             del loss; del x; del y; del outputs;
         
-        print("done")
         
         train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
         test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
