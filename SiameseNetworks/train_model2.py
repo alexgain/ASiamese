@@ -5,6 +5,7 @@ from torch.utils.data import Dataset, TensorDataset
 import torchvision
 import torchvision.transforms as transforms
 from torchvision.transforms import Compose, ToTensor
+import torchvision.transforms.functional as F
 
 import sys
 sys.path.append("..")
@@ -80,7 +81,7 @@ class CustomTensorDataset(Dataset):
         x = self.tensors[0][index]
 
         if self.transform:
-            x = self.transform(x)
+            x = self.transform(F.to_pil_image(x))
 
         y = self.tensors[1][index]
 
