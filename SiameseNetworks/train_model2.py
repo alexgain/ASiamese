@@ -102,13 +102,15 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         print(total,correct)
 
         loss_sum += loss_metric(outputs,labels).cpu()
-        
+    
+    correct = np.float(correct.cpu().data.numpy().item())
+    total = np.float(total)
     if verbose:
-        print('Accuracy:',(100 * correct / total).cpu().data.numpy().item())
-        print('Loss:', (loss_sum.cpu().data.numpy().item() / total))
+        print('Accuracy:',(100 * np.float(correct) / np.float(total)))
+        print('Loss:', (loss_sum.cpu().data.numpy().item() / np.float(total)))
 
-    acc = 100.0 * (correct / total).cpu().data.numpy().item()
-    loss = (loss_sum / total).cpu().data.numpy().item()
+    acc = 100.0 * (np.float(correct) / np.float(total))
+    loss = (loss_sum.cpu().data.numpy().item() / np.float(total))
     del images; del labels; del outputs; del _; del predicted; del total; del correct; del loss_sum
     return acc, loss
     
