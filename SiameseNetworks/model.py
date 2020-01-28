@@ -168,8 +168,18 @@ class Classifier(nn.Module):
         finalSize = int(math.floor(image_size / (2 * 2 * 2 * 2)))
         self.outSize = finalSize * finalSize * layer_size
 
-        self.linear = ALinear(self.outSize, output_shape, datasets=tasks)        
+        self.linear = ALinear(self.outSize, output_shape, datasets=tasks)   
+        self._weight_init()
 
+    def _weight_init(self):
+        for m in self.modules():
+            if isinstance(m, AConv2d):
+                m.weight.data.normal_(0, 1e-2)
+                m.bias.data.normal_(0.5, 1e-2)
+            elif isinstance(m, ALinear):
+                m.weight.data.normal_(0, 2.0 * 1e-1)
+                if m.bias is not None:
+                    m.bias.data.normal_(0.5, 1e-2)
         
         # self.linear = ALinear(self.outsize,1)
 
