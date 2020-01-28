@@ -128,6 +128,8 @@ for j in range(len(dataloaders)):
             optimizer.zero_grad()
             outputs = net(x,task=j)
             loss = loss_metric(outputs,y)
+            print(outputs)
+            print(y)
             loss.backward()
             optimizer.step()
         
