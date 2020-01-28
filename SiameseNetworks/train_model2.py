@@ -137,6 +137,8 @@ for j in range(3,len(dataloaders)):
             
             del loss; del x; del y; del outputs;
         
+        print("done")
+        
         train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
         test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
         print("Train acc, Train loss", train_acc, train_loss)
