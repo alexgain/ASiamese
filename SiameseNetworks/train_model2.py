@@ -112,7 +112,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
     return acc, loss
     
 ## Task Loop:
-for j in range(len(dataloaders)):
+for j in range(3,len(dataloaders)):
     
     train_loader, test_loader = dataloaders[j][0], dataloaders[j][1]
     
