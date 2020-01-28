@@ -62,6 +62,8 @@ for i in range(len(all_xy)):
 
     xtrain, xtest, ytrain, ytest = train_test_split(all_xy[i][0], all_xy[i][1], test_size=0.2)        
     xtrain, xtest = xtrain / xtrain.max(), xtest / xtest.max()
+    print(xtrain.min(),xtrain.max())
+    print(xtest.min(),xtest.max())
     
     xtrain = torch.Tensor(xtrain).float()
     xtest = torch.Tensor(xtest).float()
@@ -82,7 +84,7 @@ for i in range(len(all_xy)):
 net = Classifier(image_size = 105, output_shape=60, tasks=50)
 if gpu_boole:
     net = net.cuda()
-optimizer = torch.optim.Adam(net.parameters(), lr = 1e-3)
+optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
 
 ## train, test eval:
 loss_metric = torch.nn.CrossEntropyLoss()
