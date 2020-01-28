@@ -104,7 +104,10 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         print('Accuracy:',(100 * correct / total).cpu().data.numpy().item())
         print('Loss:', (loss_sum.cpu().data.numpy().item() / total))
 
-    return 100.0 * (correct / total).cpu().data.numpy().item(), (loss_sum / total).cpu().data.numpy().item()
+    acc = 100.0 * (correct / total).cpu().data.numpy().item()
+    loss = (loss_sum / total).cpu().data.numpy().item()
+    del images, del labels, del outputs, del _, del predicted, del total, del correct, del loss_sum
+    return 
     
 ## Task Loop:
 for j in range(len(dataloaders)):
