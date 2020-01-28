@@ -96,7 +96,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
             images, labels = images.cuda(), labels.cuda()
         # images = images.view(-1, 28*28)
         labels = labels.view(-1)
-        outputs = net(images)
+        outputs = net(images, task = task)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted.float() == labels.float()).sum()
