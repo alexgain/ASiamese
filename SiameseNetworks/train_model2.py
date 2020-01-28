@@ -1,5 +1,10 @@
 import torch
 from torch.utils.data import DataLoader
+from torch.utils.data import Dataset, TensorDataset
+
+import torchvision
+import torchvision.transforms as transforms
+
 from model import Classifier, _prune
 
 import numpy as np
@@ -56,7 +61,28 @@ def get_all_xy_by_alph(dataset_dir):
     return xys_by_alph 
 
 all_xy = get_all_xy_by_alph('./omniglot/python/images_background/') + get_all_xy_by_alph('./omniglot/python/images_evaluation/')
-    
+
+class CustomTensorDataset(Dataset):
+    """TensorDataset with support of transforms.
+    """
+    def __init__(self, tensors, transform=None):
+        assert all(tensors[0].size(0) == tensor.size(0) for tensor in tensors)
+        self.tensors = tensors
+        self.transform = transform
+
+    def __getitem__(self, index):
+        x = self.tensors[0][index]
+
+        if self.transform:
+            x = self.transform(x)
+
+        y = self.tensors[1][index]
+
+        return x, y
+
+    def __len__(self):
+        return self.tensors[0].size(0)
+
 dataloaders = []
 for i in range(len(all_xy)):
 
@@ -70,10 +96,16 @@ for i in range(len(all_xy)):
     
     xtrain.unsqueeze_(dim=1);xtest.unsqueeze_(dim=1);
     
-    train = torch.utils.data.TensorDataset(xtrain, ytrain)
-    test = torch.utils.data.TensorDataset(xtest, ytest)
-        
-    dataloaders.append([torch.utils.data.DataLoader(train, batch_size=args.batch_size, shuffle=True),torch.utils.data.DataLoader(test, batch_size=args.batch_size, shuffle=False)])
+    # train = torch.utils.data.TensorDataset(xtrain, ytrain)
+    # test = torch.utils.data.TensorDataset(xtest, ytest)
+    
+    train = CustomTensorDataset(tensors=(xtrain, ytrain), transform=None)
+    test = CustomTensorDataset(tensors=(xtest, ytest), transform=None)
+    
+    train_loader = torch.utils.data.DataLoader(train, batch_size=args.batch_size, shuffle=True)
+    test_loader = torch.utils.data.DataLoader(test, batch_size=args.batch_size, shuffle=False)
+    
+    dataloaders.append([])
 
 ## model and optimizer instantiations:
 net = Classifier(image_size = 105, output_shape=60, tasks=50)
