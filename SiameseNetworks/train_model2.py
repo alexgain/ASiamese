@@ -92,6 +92,8 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
     total = 0
     loss_sum = 0
     for images, labels in data_loader:
+        print(images)
+        print(labels)        
         if gpu_boole:
             images, labels = images.cuda(), labels.cuda()
         # images = images.view(-1, 28*28)
@@ -128,8 +130,7 @@ for j in range(len(dataloaders)):
             optimizer.zero_grad()
             outputs = net(x,task=j)
             loss = loss_metric(outputs,y)
-            print(outputs)
-            print(y)
+            print(loss)
             loss.backward()
             optimizer.step()
         
