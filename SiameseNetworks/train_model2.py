@@ -4,7 +4,11 @@ from torch.utils.data import Dataset, TensorDataset
 
 import torchvision
 import torchvision.transforms as transforms
-from torchvision.transforms import RandomAffine, RandomApply, Compose, ToTensor
+from torchvision.transforms import Compose, ToTensor
+
+sys.path.append("..")
+
+from common_utils.imgaug import RandomAffine, RandomApply
 
 from model import Classifier, _prune
 
