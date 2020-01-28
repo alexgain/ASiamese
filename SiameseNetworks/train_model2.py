@@ -92,7 +92,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         if gpu_boole:
             images, labels = images.cuda(), labels.cuda()
         # images = images.view(-1, 28*28)
-        labels = labels.view(-1)
+        labels = labels.view(-1).cpu()
         outputs = net(images, task = task)
         _, predicted = torch.max(outputs.cpu().data, 1)
         total += labels.size(0)
