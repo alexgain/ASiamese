@@ -4,13 +4,13 @@ from torch.utils.data import Dataset, TensorDataset
 
 import torchvision
 import torchvision.transforms as transforms
-from torchvision.transforms import Compose, ToTensor
+from torchvision.transforms import Compose, ToTensor, RandomAffine, RandomApply
 import torchvision.transforms.functional as F
 
 import sys
 sys.path.append("..")
 
-from common_utils.imgaug import RandomAffine, RandomApply
+# from common_utils.imgaug import RandomAffine, RandomApply
 
 from model import Classifier, _prune
 
@@ -93,7 +93,7 @@ class CustomTensorDataset(Dataset):
 
 train_data_aug = Compose([
     RandomApply(
-        RandomAffine(rotation=(-10, 10), scale=(0.8, 1.2), translate=(-0.05, 0.05)),
+        RandomAffine(degrees=(-10, 10), scale=(0.8, 1.2), translate=(-0.05, 0.05)),
         proba=0.5
     ),
     ToTensor()
