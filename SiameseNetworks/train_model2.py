@@ -4,6 +4,7 @@ from torch.utils.data import Dataset, TensorDataset
 
 import torchvision
 import torchvision.transforms as transforms
+from torchvision.transforms import RandomAffine, RandomApply, Compose, ToTensor
 
 from model import Classifier, _prune
 
@@ -83,11 +84,25 @@ class CustomTensorDataset(Dataset):
     def __len__(self):
         return self.tensors[0].size(0)
 
+
+train_data_aug = Compose([
+    RandomApply(
+        RandomAffine(rotation=(-10, 10), scale=(0.8, 1.2), translate=(-0.05, 0.05)),
+        proba=0.5
+    ),
+    ToTensor()
+])
+
+test_data_aug = Compose([
+    ToTensor()
+])
+
+
 dataloaders = []
 for i in range(len(all_xy)):
 
     xtrain, xtest, ytrain, ytest = train_test_split(all_xy[i][0], all_xy[i][1], test_size=0.2)        
-    xtrain, xtest = xtrain / xtrain.max(), xtest / xtest.max()
+    # xtrain, xtest = xtrain / xtrain.max(), xtest / xtest.max()
     
     xtrain = torch.Tensor(xtrain).float()
     xtest = torch.Tensor(xtest).float()
@@ -99,8 +114,8 @@ for i in range(len(all_xy)):
     # train = torch.utils.data.TensorDataset(xtrain, ytrain)
     # test = torch.utils.data.TensorDataset(xtest, ytest)
     
-    train = CustomTensorDataset(tensors=(xtrain, ytrain), transform=None)
-    test = CustomTensorDataset(tensors=(xtest, ytest), transform=None)
+    train = CustomTensorDataset(tensors=(xtrain, ytrain), transform=train_data_aug)
+    test = CustomTensorDataset(tensors=(xtest, ytest), transform=test_data_aug)
     
     train_loader = torch.utils.data.DataLoader(train, batch_size=args.batch_size, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test, batch_size=args.batch_size, shuffle=False)
