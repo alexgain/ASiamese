@@ -131,8 +131,8 @@ for j in range(len(dataloaders)):
         
         train_loss, train_acc = dataset_eval(train_loader, verbose = 0, task = j)
         test_loss, test_acc = dataset_eval(test_loader, verbose = 0, task = j)
-        print("Train acc, Train loss", train_loss, train_acc)
-        print("Test acc, Test loss", test_loss, test_acc)
+        print("Train acc, Train loss", train_acc, train_loss)
+        print("Test acc, Test loss", test_acc, test_loss)
         print()
     
     print("Test acc for all tasks:")
