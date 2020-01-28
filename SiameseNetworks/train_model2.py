@@ -133,6 +133,8 @@ for j in range(len(dataloaders)):
             loss = loss_metric(outputs,y)
             loss.backward()
             optimizer.step()
+            
+            del loss; del x; del y; del outputs;
         
         train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
         test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
