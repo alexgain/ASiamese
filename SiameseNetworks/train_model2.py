@@ -94,15 +94,15 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         # images = images.view(-1, 28*28)
         labels = labels.view(-1)
         outputs = net(images, task = task)
-        _, predicted = torch.max(outputs.data, 1)
+        _, predicted = torch.max(outputs.cpu().data, 1)
         total += labels.size(0)
         correct += (predicted.float() == labels.float()).sum()
 
         loss_sum += loss_metric(outputs,labels)
         
     if verbose:
-        print('Accuracy: %f %%' % (100 * correct / total).cpu().data.numpy().item())
-        print('Loss: %f' % (loss_sum.cpu().data.numpy().item() / total))
+        print('Accuracy:',(100 * correct / total).cpu().data.numpy().item())
+        print('Loss:', (loss_sum.cpu().data.numpy().item() / total))
 
     return 100.0 * (correct / total).cpu().data.numpy().item(), (loss_sum / total).cpu().data.numpy().item()
     
@@ -124,6 +124,7 @@ for j in range(len(dataloaders)):
             
             optimizer.zero_grad()
             outputs = net(x,task=j)
+            
             loss = loss_metric(outputs,y)
             loss.backward()
             optimizer.step()
@@ -137,9 +138,11 @@ for j in range(len(dataloaders)):
     print("Test acc for all tasks:")
     for j2 in range(len(dataloaders)):
         print("Task:",j2)
-        # train_loss, train_acc = dataset_eval(dataloaders[j2][0], verbose = 0, task = j2)
-        test_loss, test_acc = dataset_eval(dataloaders[j2][1], verbose = 0, task = 1)
+        test_loss, test_acc = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2)
+        # test_loss, test_acc = dataset_eval(dataloaders[j2][1], verbose = 0, task = 1)
         # print("Train acc, Train loss", train_loss, train_acc)
-        print("Test acc, Test loss", train_loss, train_acc)
+        print("Test acc:",test_acc)
+        print("Test loss:",test_loss)
+        
 
 
