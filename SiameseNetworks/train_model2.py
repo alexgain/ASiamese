@@ -95,6 +95,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         if gpu_boole:
             images, labels = images.cuda(), labels.cuda()
         # images = images.view(-1, 28*28)
+        labels = labels.view(-1)
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
@@ -114,6 +115,8 @@ for j in range(len(dataloaders)):
     train_loader, test_loader = dataloaders[j][0], dataloaders[j][1]
     
     for epoch in range(args.epochs):
+        
+        print("Task:",j,"- Epoch:",epoch)
 
         for i, (x,y) in enumerate(train_loader):
             
