@@ -93,7 +93,7 @@ class CustomTensorDataset(Dataset):
 
 train_data_aug = Compose([
     RandomApply(
-        RandomAffine(degrees=(-10, 10), scale=(0.8, 1.2), translate=(0.05, 0.05)),
+        [RandomAffine(degrees=(-10, 10), scale=(0.8, 1.2), translate=(0.05, 0.05))],
         p=0.5
     ),
     ToTensor()
