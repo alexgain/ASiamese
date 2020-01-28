@@ -98,7 +98,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         total += labels.size(0)
         correct += (predicted.float() == labels.float()).sum()
 
-        loss_sum += loss_metric(outputs,labels)
+        loss_sum += loss_metric(outputs,labels).cpu()
         
     if verbose:
         print('Accuracy:',(100 * correct / total).cpu().data.numpy().item())
