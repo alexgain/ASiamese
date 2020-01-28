@@ -107,7 +107,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         print('Accuracy: %f %%' % (100 * correct / total).cpu().data.numpy().item())
         print('Loss: %f' % (loss_sum.cpu().data.numpy().item() / total))
 
-    return 100.0 * correct / total, loss_sum.cpu().data.numpy().item() / total
+    return 100.0 * (correct / total).cpu().data.numpy().item(), (loss_sum / total).cpu().data.numpy().item()
     
 ## Task Loop:
 for j in range(len(dataloaders)):
@@ -135,6 +135,7 @@ for j in range(len(dataloaders)):
         test_loss, test_acc = dataset_eval(test_loader, verbose = 0, task = j)
         print("Train acc, Train loss", train_loss, train_acc)
         print("Test acc, Test loss", train_loss, train_acc)
+        print()
     
     print("Test acc for all tasks:")
     for j2 in range(len(dataloaders)):
