@@ -96,11 +96,11 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         outputs = net(images, task = task).cpu()
         _, predicted = torch.max(outputs.cpu().data, 1)
         total += labels.size(0)
-        correct += (predicted.float() == labels.float()).sum()
+        correct += (predicted.float() == labels.float()).sum().cpu().data.numpy().item()
 
         loss_sum += loss_metric(outputs,labels).cpu()
     
-    correct = np.float(correct.cpu().data.numpy().item())
+    correct = np.float(correct)
     total = np.float(total)
     if verbose:
         print('Accuracy:',(100 * np.float(correct) / np.float(total)))
@@ -122,6 +122,7 @@ for j in range(3,len(dataloaders)):
 
         for i, (x,y) in enumerate(train_loader):
             
+            print(i)
             if gpu_boole:
                 x, y = x.cuda(), y.cuda()
                 
