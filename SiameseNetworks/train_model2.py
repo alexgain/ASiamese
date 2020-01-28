@@ -106,15 +106,15 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
     total = np.float(total)
     if verbose:
         print('Accuracy:',(100 * np.float(correct) / np.float(total)))
-        print('Loss:', (loss_sum.cpu().data.numpy().item() / np.float(total)))
+        print('Loss:', (loss_sum / np.float(total)))
 
     acc = 100.0 * (np.float(correct) / np.float(total))
-    loss = (loss_sum.cpu().data.numpy().item() / np.float(total))
+    loss = (loss_sum / np.float(total))
     del total; del correct; del loss_sum
     return acc, loss
     
 ## Task Loop:
-for j in range(3,len(dataloaders)):
+for j in range(len(dataloaders)):
     
     train_loader, test_loader = dataloaders[j][0], dataloaders[j][1]
     
