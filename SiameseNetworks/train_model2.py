@@ -104,7 +104,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
         loss_sum += loss_metric(outputs,labels)
         
     if verbose:
-        print('Accuracy: %f %%' % (100 * correct / total))
+        print('Accuracy: %f %%' % (100 * correct / total).cpu().data.numpy().item())
         print('Loss: %f' % (loss_sum.cpu().data.numpy().item() / total))
 
     return 100.0 * correct / total, loss_sum.cpu().data.numpy().item() / total
