@@ -129,8 +129,8 @@ for j in range(len(dataloaders)):
             loss.backward()
             optimizer.step()
         
-        train_loss, train_acc = dataset_eval(train_loader, verbose = 0, task = j)
-        test_loss, test_acc = dataset_eval(test_loader, verbose = 0, task = j)
+        train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
+        test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
         print("Train acc, Train loss", train_acc, train_loss)
         print("Test acc, Test loss", test_acc, test_loss)
         print()
@@ -138,7 +138,7 @@ for j in range(len(dataloaders)):
     print("Test acc for all tasks:")
     for j2 in range(len(dataloaders)):
         print("Task:",j2)
-        test_loss, test_acc = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2)
+        test_acc, test_loss = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2)
         # test_loss, test_acc = dataset_eval(dataloaders[j2][1], verbose = 0, task = 1)
         # print("Train acc, Train loss", train_loss, train_acc)
         print("Test acc:",test_acc)
