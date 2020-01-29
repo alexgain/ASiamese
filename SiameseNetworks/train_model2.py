@@ -205,7 +205,7 @@ for j in range(len(dataloaders)):
         print()
 
         if epoch <= args.epochs - 20 and args.epochs>20:
-            _prune(net)
+            _prune(net,task=j)
     
     print("Test acc for all tasks:")
     total_test_acc = 0
