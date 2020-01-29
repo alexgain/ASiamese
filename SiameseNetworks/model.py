@@ -569,7 +569,7 @@ def return_ones(module, task):
 
 def _prune_freeze(module, task):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) <= 0.15).data
+        mask = torch.round((module.soft_round(module.adjx[task]) <= 0.15)).data
         for k in range(len(module.adjx)):
             if k==task:
                 continue
