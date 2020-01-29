@@ -135,7 +135,11 @@ for i in range(len(all_xy)):
 net = Classifier(image_size = args.im_size, output_shape=60, tasks=50, layer_size=args.hidden_size)
 if gpu_boole:
     net = net.cuda()
-optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
+# optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
+optimizer = torch.optim.Adam([
+                {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':1e-4,'momentum':0.85},
+                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-4,'momentum':0.85,'weight_decay':0.85}
+            ])
 
 ## train, test eval:
 loss_metric = torch.nn.CrossEntropyLoss()
@@ -193,13 +197,15 @@ for j in range(len(dataloaders)):
             optimizer.step()
             
             del loss; del x; del y; del outputs;
-        
-        
+                        
         train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
         test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
         print("Train acc, Train loss", train_acc, train_loss)
         print("Test acc, Test loss", test_acc, test_loss)
         print()
+
+        if epoch <= args.epochs - 20 and args.epochs>20:
+            _prune(net)
     
     print("Test acc for all tasks:")
     total_test_acc = 0
