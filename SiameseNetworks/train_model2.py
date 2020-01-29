@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune
+from model import Classifier, _prune, _prune_freeze
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -206,6 +206,8 @@ for j in range(len(dataloaders)):
 
         if epoch <= args.epochs - 20 and args.epochs>20:
             _prune(net,task=j)
+    
+    _prune_freeze(net,task=j)
     
     print("Test acc for all tasks:")
     total_test_acc = 0

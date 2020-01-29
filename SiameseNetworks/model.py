@@ -558,6 +558,27 @@ def _prune(module, task):
         for submodule in module.children():
             _prune(submodule, task)
 
+def return_ones(module, task):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        mask = (module.soft_round(module.adjx[task]) > 0.85).data
+        l = module.adjx[task]*mask.float()
+        module.adjx[task].data.copy_(l.data)
+    if hasattr(module, 'children'):
+        for submodule in module.children():
+            _prune(submodule, task)
+
+def _prune_freeze(module, task):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        mask = (module.soft_round(module.adjx[task]) <= 0.85).data
+        for k in range(len(module.adjx)):
+            if k==task:
+                continue
+            l = module.adjx[k]*mask.float()
+            module.adjx[k].data.copy_(l.data)
+    if hasattr(module, 'children'):
+        for submodule in module.children():
+            _prune_freeze(submodule, task)
+
 # def prune(self, p_para=0.5, task=None):
 #     for module in list(self.children()):
 #         if hasattr(module,'l1_loss'):
