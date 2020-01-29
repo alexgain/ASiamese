@@ -204,7 +204,8 @@ for j in range(len(dataloaders)):
         print("Test acc, Test loss", test_acc, test_loss)
         print()
 
-        if epoch <= args.epochs - 20 and args.epochs>20:
+        if epoch >= (args.epochs - 20) and args.epochs>20:
+            print("Pruning...")
             _prune(net,task=j)
     
     _prune_freeze(net,task=j)
