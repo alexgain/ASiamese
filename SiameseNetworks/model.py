@@ -570,7 +570,7 @@ def return_ones(module, task):
 import numpy as np
 def _prune_freeze(module, task):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = torch.round((module.soft_round(module.adjx[task]) <= 0.15)).data
+        mask = (module.soft_round(module.adjx[task]) <= 0.15).data
         print(mask.sum()/np.prod(mask.shape))
         for k in range(len(module.adjx)):
             if k==task:
