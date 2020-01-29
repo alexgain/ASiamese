@@ -561,6 +561,7 @@ def _prune(module, task):
 def return_ones(module, task):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
         mask = (module.soft_round(module.adjx[task]) > 0.15).data
+        print(mask.sum().float()/np.prod(mask.shape))
         l = module.adjx[task]*mask.float()
         module.adjx[task].data.copy_(l.data)
     if hasattr(module, 'children'):
