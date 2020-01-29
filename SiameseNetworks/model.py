@@ -557,7 +557,7 @@ def _prune(module, task, prune_para):
         module.adjx[task].data.copy_(l.data)
     if hasattr(module, 'children'):
         for submodule in module.children():
-            _prune(submodule, task)
+            _prune(submodule, task, prune_para)
 
 import numpy as np
 def _prune_freeze(module, task, prune_para):
@@ -571,7 +571,7 @@ def _prune_freeze(module, task, prune_para):
             module.adjx[k].data.copy_(l.data)
     if hasattr(module, 'children'):
         for submodule in module.children():
-            _prune_freeze(submodule, task)
+            _prune_freeze(submodule, task, prune_para)
 
 # def prune(self, p_para=0.5, task=None):
 #     for module in list(self.children()):
