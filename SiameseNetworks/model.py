@@ -560,7 +560,7 @@ def _prune(module, task):
 
 def return_ones(module, task):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) > 0.85).data
+        mask = (module.soft_round(module.adjx[task]) > 0.15).data
         l = module.adjx[task]*mask.float()
         module.adjx[task].data.copy_(l.data)
     if hasattr(module, 'children'):
@@ -569,7 +569,7 @@ def return_ones(module, task):
 
 def _prune_freeze(module, task):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) <= 0.85).data
+        mask = (module.soft_round(module.adjx[task]) <= 0.15).data
         for k in range(len(module.adjx)):
             if k==task:
                 continue
