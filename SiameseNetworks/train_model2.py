@@ -207,9 +207,9 @@ for j in range(len(dataloaders)):
 
         if epoch >= (args.epochs - 20) and args.epochs>20:
             print("Pruning...")
-            _prune(net,task=j,args.prune_para)
+            _prune(net,task=j,prune_para=args.prune_para)
     
-    _prune_freeze(net,task=j,args.prune_para)
+    _prune_freeze(net,task=j,prune_para=args.prune_para)
     
     print("Test acc for all tasks:")
     total_test_acc = 0
