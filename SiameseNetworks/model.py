@@ -549,19 +549,10 @@ class ASiameseNetworks2(Module):
 
         return Sum            
 
-def _prune(module, task):
+def _prune(module, task, prune_para):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) > 0.85).data
-        l = module.adjx[task]*mask.float()
-        module.adjx[task].data.copy_(l.data)
-    if hasattr(module, 'children'):
-        for submodule in module.children():
-            _prune(submodule, task)
-
-def return_ones(module, task):
-    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) > 0.15).data
-        print(mask.sum().float()/np.prod(mask.shape))
+        mask = (module.soft_round(module.adjx[task]) > prune_para).data
+        print("Params alive:",mask.sum().float()/np.prod(mask.shape))
         l = module.adjx[task]*mask.float()
         module.adjx[task].data.copy_(l.data)
     if hasattr(module, 'children'):
@@ -569,10 +560,10 @@ def return_ones(module, task):
             _prune(submodule, task)
 
 import numpy as np
-def _prune_freeze(module, task):
+def _prune_freeze(module, task, prune_para):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) <= 0.15).data
-        print(mask.sum().float()/np.prod(mask.shape))
+        mask = (module.soft_round(module.adjx[task]) <= prune_para).data
+        print("Params to prune:",mask.sum().float()/np.prod(mask.shape))
         for k in range(len(module.adjx)):
             if k==task:
                 continue
