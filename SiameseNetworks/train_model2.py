@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj
+from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _adj_spars_loss
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -43,7 +43,8 @@ parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
 parser.add_argument('--prune_para', default=0.95, type=float, help='sparsity percentage pruned')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
-parser.add_argument('--adj_ind', default=0, type=float, help='prune params')
+parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
+parser.add_argument('--adj_spars', default=0, type=float, help='adj sparsity loss.')
 args = parser.parse_args()
 
 ## Getting Dataloaders for Omniglot:
@@ -203,11 +204,16 @@ for j in range(len(dataloaders)):
             loss = loss_metric(outputs,y)
             if args.adj_ind > 0 and j > 0:
                 loss -= args.adj_ind *_adj_ind_loss(net,j+1)
+            if args.adj_spars > 0:
+                loss -= args.adj_spars * _adj_spars_loss(net, j)
+            
             loss.backward()
             optimizer.step()
             
             del loss; del x; del y; del outputs;
-                        
+        
+        print(net.conv1.adjx[0].min(),net.conv1.adjx[0].max())                
+        print(net.conv1.adjx[1].min(),net.conv1.adjx[1].max())                
         train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
         test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
         print("Train acc, Train loss", train_acc, train_loss)

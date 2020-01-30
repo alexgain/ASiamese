@@ -627,7 +627,23 @@ def _turn_off_adj(module, task):
         for submodule in module.children():
             _turn_off_adj(submodule, task)
     
-
+def _adj_spars_loss(module, task, S=0):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
+        S += (module.adjx[task].norm(p=1)/module.adjx[task].view(-1).shape[0])
+        return S
+        
+    if hasattr(module, 'children'):
+        n = 0
+        for submodule in module.children():
+            S += _adj_spars_loss(submodule, task=task, S=S)
+            n+=1
+        if n > 0:
+            S /= n
+            
+        # S += torch.sum(torch.Tensor([_adj_ind_loss(submodule, S) for submodule in module.children()]))
+        return S
+        
+    
 # def prune(self, p_para=0.5, task=None):
 #     for module in list(self.children()):
 #         if hasattr(module,'l1_loss'):
