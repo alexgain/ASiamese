@@ -630,7 +630,7 @@ def _turn_off_adj(module, task):
     
 def _adj_spars_loss(module, task, S=0):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
-        mask = (module.soft_round(module.adjx[task]) > prune_para).data
+        mask = (module.soft_round(module.adjx[task]) > 0.95).data
         if (mask.sum().float()/np.prod(mask.shape))>0.1:
             S += (module.adjx[task].norm(p=1)/module.adjx[task].view(-1).shape[0])
         return S
