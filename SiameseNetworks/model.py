@@ -1,13 +1,14 @@
-
 import torch
 from torch.nn import Module, Sequential
 from torch.nn import Linear, Conv2d, MaxPool2d, Sigmoid, ReLU
 from torch.autograd import Variable
 
-
 import torch.nn.functional as F
 import torch.nn as nn
 from layers import ALinear, AConv2d
+
+import numpy as np
+
 
 class ATwoLayer(nn.Module):
     def __init__(self, input_size=28, hidden_size=100, output=10, tasks=8, s_init=False, beta=False):
@@ -559,7 +560,51 @@ def _prune(module, task, prune_para):
         for submodule in module.children():
             _prune(submodule, task, prune_para)
 
-import numpy as np
+
+def pairwise_distances(x, y=None):
+    '''
+    Input: x is a Nxd matrix
+           y is an optional Mxd matirx
+    Output: dist is a NxM matrix where dist[i,j] is the square norm between x[i,:] and y[j,:]
+            if y is not given then use 'y=x'.
+    i.e. dist[i,j] = ||x[i,:]-y[j,:]||^2
+    '''
+    x_norm = (x**2).sum(1).view(-1, 1)
+    if y is not None:
+        y_t = torch.transpose(y, 0, 1)
+        y_norm = (y**2).sum(1).view(1, -1)
+    else:
+        y_t = torch.transpose(x, 0, 1)
+        y_norm = x_norm.view(1, -1)
+    
+    dist = x_norm + y_norm - 2.0 * torch.mm(x, y_t)
+    # Ensure diagonal is zero if x=y
+    # if y is None:
+    #     dist = dist - torch.diag(dist.diag)
+    return torch.clamp(dist, 0.0, np.inf)
+            
+def _adj_ind_loss(module, S=0):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
+        A = torch.stack(list(module.adjx)).view(len(module.adjx),-1)
+        # if torch.cuda.is_available():
+        #     A = A.cuda()
+        # S = pairwise_distances(A).mean()/2
+        S += pairwise_distances(A).mean()/(2*A.shape[1])
+        return S
+        
+    if hasattr(module, 'children'):
+        n = 0
+        for submodule in module.children():
+            S += _adj_ind_loss(submodule, S=S)
+            n+=1
+        if n > 0:
+            S /= n
+            
+        # S += torch.sum(torch.Tensor([_adj_ind_loss(submodule, S) for submodule in module.children()]))
+        return S
+        
+    
+
 def _prune_freeze(module, task, prune_para):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
         mask = (module.soft_round(module.adjx[task]) <= prune_para).data

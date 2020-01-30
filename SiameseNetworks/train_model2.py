@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune, _prune_freeze
+from model import Classifier, _prune, _prune_freeze, _adj_ind_loss
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -33,6 +33,7 @@ parser.add_argument('--epochs', type=int, default=30, help='upper epoch limit (d
 parser.add_argument('--epochs2', type=int, default=30, help='number of epochs for subsequent tasks.')
 parser.add_argument('--lr', type=float, default=2e-3, help='initial learning rate (default: 2e-3)')
 parser.add_argument('--lr2', type=float, default=0, help='second learning rate')
+parser.add_argument('--lr_adj', type=float, default=1e-3, help='adj learning rate')
 parser.add_argument('--decay', type=float, default=0.85, help='adj decay rate')
 parser.add_argument('--optim', type=str, default='Adam', help='optimizer to use (default: Adam)')
 parser.add_argument('--nhid', type=int, default=25, help='number of hidden units per layer (default: 25)')
@@ -42,6 +43,7 @@ parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
 parser.add_argument('--prune_para', default=0.95, type=float, help='sparsity percentage pruned')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune', action='store_true', help='prune params')
+parser.add_argument('--adj_ind', default=0, type=float, help='prune params')
 args = parser.parse_args()
 
 ## Getting Dataloaders for Omniglot:
@@ -199,6 +201,8 @@ for j in range(len(dataloaders)):
             outputs = net(x,task=j)
             
             loss = loss_metric(outputs,y)
+            if args.adj_ind > 0:
+                loss -= args.adj_ind *_adj_ind_loss(net)
             loss.backward()
             optimizer.step()
             
@@ -217,7 +221,7 @@ for j in range(len(dataloaders)):
     if j == 0:
         optimizer = torch.optim.Adam([
                 {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':args.lr2},
-                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-3,'momentum':0.85,'weight_decay':args.decay}
+                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0.85,'weight_decay':args.decay}
             ])
     
         args.epochs=args.epochs2
