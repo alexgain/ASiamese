@@ -39,6 +39,7 @@ parser.add_argument('--hidden_size', default=64, type=int, help='hidden neurons'
 parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
 parser.add_argument('--prune_para', default=0.95, type=float, help='sparsity percentage pruned')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
+parser.add_argument('--prune', action='store_true', help='prune params')
 args = parser.parse_args()
 
 ## Getting Dataloaders for Omniglot:
@@ -207,7 +208,7 @@ for j in range(len(dataloaders)):
         print("Test acc, Test loss", test_acc, test_loss)
         print()
 
-        if epoch >= (args.epochs - 20) and args.epochs>20:
+        if epoch >= (args.epochs - 20) and args.epochs>20 and args.prune:
             print("Pruning...")
             _prune(net,task=j,prune_para=args.prune_para)
     
