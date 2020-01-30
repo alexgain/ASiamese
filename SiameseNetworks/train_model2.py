@@ -140,8 +140,8 @@ if gpu_boole:
     net = net.cuda()
 # optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
 optimizer = torch.optim.Adam([
-                {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':1e-4,'momentum':0.85},
-                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-4,'momentum':0.85,'weight_decay':args.decay}
+                {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':1e-4,'momentum':0,
+                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-4,'momentum':0,'weight_decay':args.decay}
             ])
 
 ## train, test eval:
