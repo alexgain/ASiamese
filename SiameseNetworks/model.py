@@ -583,19 +583,21 @@ def pairwise_distances(x, y=None):
     #     dist = dist - torch.diag(dist.diag)
     return torch.clamp(dist, 0.0, np.inf)
             
-def _adj_ind_loss(module, S=0):
+def _adj_ind_loss(module, task, S=0):
+    if task==0:
+        return 0
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
-        A = torch.stack(list(module.adjx)).view(len(module.adjx),-1)
+        A = torch.stack(list(module.adjx[:task])).view(task,-1)
         # if torch.cuda.is_available():
         #     A = A.cuda()
         # S = pairwise_distances(A).mean()/2
-        S += pairwise_distances(A).mean()/(2*A.shape[1])
+        S += pairwise_distances(A).mean()/(2*(A.shape[1]))
         return S
         
     if hasattr(module, 'children'):
         n = 0
         for submodule in module.children():
-            S += _adj_ind_loss(submodule, S=S)
+            S += _adj_ind_loss(submodule, task=task, S=S)
             n+=1
         if n > 0:
             S /= n
@@ -617,6 +619,14 @@ def _prune_freeze(module, task, prune_para):
     if hasattr(module, 'children'):
         for submodule in module.children():
             _prune_freeze(submodule, task, prune_para)
+
+def _turn_off_adj(module, task):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        module.adjx[task].requires_grad=False
+    if hasattr(module, 'children'):
+        for submodule in module.children():
+            _turn_off_adj(submodule, task)
+    
 
 # def prune(self, p_para=0.5, task=None):
 #     for module in list(self.children()):

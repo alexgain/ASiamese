@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune, _prune_freeze, _adj_ind_loss
+from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,7 +42,7 @@ parser.add_argument('--hidden_size', default=64, type=int, help='hidden neurons'
 parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
 parser.add_argument('--prune_para', default=0.95, type=float, help='sparsity percentage pruned')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
-parser.add_argument('--prune', action='store_true', help='prune params')
+parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
 parser.add_argument('--adj_ind', default=0, type=float, help='prune params')
 args = parser.parse_args()
 
@@ -201,7 +201,7 @@ for j in range(len(dataloaders)):
             outputs = net(x,task=j)
             
             loss = loss_metric(outputs,y)
-            if args.adj_ind > 0:
+            if args.adj_ind > 0 and j > 0:
                 loss -= args.adj_ind *_adj_ind_loss(net)
             loss.backward()
             optimizer.step()
@@ -214,7 +214,7 @@ for j in range(len(dataloaders)):
         print("Test acc, Test loss", test_acc, test_loss)
         print()
 
-        if epoch >= (args.epochs - 20) and args.epochs>20 and args.prune:
+        if epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch:
             print("Pruning...")
             _prune(net,task=j,prune_para=args.prune_para)
     
@@ -223,12 +223,12 @@ for j in range(len(dataloaders)):
                 {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':args.lr2},
                 {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0.85,'weight_decay':args.decay}
             ])
-    
+        
         args.epochs=args.epochs2
-        # for name, param in net.named_parameters(): 
-        #     if 'adjx' not in name:
-        #         param.requires_grad=False
+        
 
+    _turn_off_adj(net,j)
+    
     if args.freeze:
         print("Freezing...")
         _prune_freeze(net,task=j,prune_para=args.prune_para)
