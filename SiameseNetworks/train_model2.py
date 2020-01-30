@@ -30,6 +30,7 @@ parser = argparse.ArgumentParser(description='Sequence Modeling - (Permuted) Seq
 parser.add_argument('--batch_size', type=int, default=16, help='batch size (default: 64)')
 parser.add_argument('--cuda', action='store_true', help='use CUDA (default: True)')
 parser.add_argument('--epochs', type=int, default=30, help='upper epoch limit (default: 30)')
+parser.add_argument('--epochs2', type=int, default=30, help='number of epochs for subsequent tasks.')
 parser.add_argument('--lr', type=float, default=2e-3, help='initial learning rate (default: 2e-3)')
 parser.add_argument('--decay', type=float, default=0.85, help='adj decay rate')
 parser.add_argument('--optim', type=str, default='Adam', help='optimizer to use (default: Adam)')
@@ -218,7 +219,7 @@ for j in range(len(dataloaders)):
                 {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-3,'momentum':0.85,'weight_decay':args.decay}
             ])
     
-        args.epochs=300
+        args.epochs=args.epochs2
         # for name, param in net.named_parameters(): 
         #     if 'adjx' not in name:
         #         param.requires_grad=False
