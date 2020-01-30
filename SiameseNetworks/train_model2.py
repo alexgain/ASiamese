@@ -202,7 +202,7 @@ for j in range(len(dataloaders)):
             
             loss = loss_metric(outputs,y)
             if args.adj_ind > 0 and j > 0:
-                loss -= args.adj_ind *_adj_ind_loss(net)
+                loss -= args.adj_ind *_adj_ind_loss(net,j)
             loss.backward()
             optimizer.step()
             
