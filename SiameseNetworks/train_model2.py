@@ -31,7 +31,7 @@ parser.add_argument('--batch_size', type=int, default=16, help='batch size (defa
 parser.add_argument('--cuda', action='store_true', help='use CUDA (default: True)')
 parser.add_argument('--epochs', type=int, default=30, help='upper epoch limit (default: 30)')
 parser.add_argument('--epochs2', type=int, default=30, help='number of epochs for subsequent tasks.')
-parser.add_argument('--lr', type=float, default=2e-3, help='initial learning rate (default: 2e-3)')
+parser.add_argument('--lr', type=float, default=1e-4, help='initial learning rate (default: 2e-3)')
 parser.add_argument('--lr2', type=float, default=0, help='second learning rate')
 parser.add_argument('--lr_adj', type=float, default=1e-3, help='adj learning rate')
 parser.add_argument('--decay', type=float, default=0.85, help='adj decay rate')
