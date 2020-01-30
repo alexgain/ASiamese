@@ -227,7 +227,7 @@ for j in range(len(dataloaders)):
     if j == 0:
         optimizer = torch.optim.Adam([
                 {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':args.lr2},
-                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0.85,'weight_decay':args.decay}
+                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0,'weight_decay':args.decay}
             ])
         
         args.epochs=args.epochs2
