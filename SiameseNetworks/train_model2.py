@@ -215,8 +215,13 @@ for j in range(len(dataloaders)):
     if j == 0:
         optimizer = torch.optim.Adam([
                 {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':0},
-                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-4,'momentum':0.85,'weight_decay':args.decay}
+                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-3,'momentum':0.85,'weight_decay':args.decay}
             ])
+    
+        args.epochs=300
+        # for name, param in net.named_parameters(): 
+        #     if 'adjx' not in name:
+        #         param.requires_grad=False
 
     if args.freeze:
         print("Freezing...")
