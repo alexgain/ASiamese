@@ -212,8 +212,6 @@ for j in range(len(dataloaders)):
             
             del loss; del x; del y; del outputs;
         
-        print(net.conv1.adjx[0].min(),net.conv1.adjx[0].max())                
-        print(net.conv1.adjx[1].min(),net.conv1.adjx[1].max())                
         train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
         test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
         print("Train acc, Train loss", train_acc, train_loss)
