@@ -147,7 +147,7 @@ if gpu_boole:
 # optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
 optimizer = torch.optim.SGD([
                 {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':args.lr,'momentum':0},
-                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr,'momentum':0,'weight_decay':args.decay}
+                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0,'weight_decay':args.decay}
             ])
 
 ## train, test eval:
