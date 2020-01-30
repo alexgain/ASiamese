@@ -217,8 +217,9 @@ for j in range(len(dataloaders)):
                 {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-4,'momentum':0.85,'weight_decay':args.decay}
             ])
 
-    
-    _prune_freeze(net,task=j,prune_para=args.prune_para)
+    if args.freeze:
+        print("Freezing...")
+        _prune_freeze(net,task=j,prune_para=args.prune_para)
     
     print("Test acc for all tasks:")
     total_test_acc = 0
