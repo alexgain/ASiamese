@@ -587,12 +587,14 @@ def _adj_ind_loss(module, task, S=0):
     if task==0:
         return 0
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
-        A = torch.stack(list(module.adjx[:task])).view(task,-1)
-        # A = torch.stack([module.soft_round(m) for m in list(module.adjx[:task])]).view(task,-1)
-        # if torch.cuda.is_available():
-        #     A = A.cuda()
-        # S = pairwise_distances(A).mean()/2
-        S += pairwise_distances(A).mean()/(2*(A.shape[1]))
+        mask = (module.soft_round(module.adjx[task-1]) > 0.95).data
+        if (mask.sum().float()/np.prod(mask.shape))>0.13:
+            A = torch.stack(list(module.adjx[:task])).view(task,-1)
+            # A = torch.stack([module.soft_round(m) for m in list(module.adjx[:task])]).view(task,-1)
+            # if torch.cuda.is_available():
+            #     A = A.cuda()
+            # S = pairwise_distances(A).mean()/2
+            S += pairwise_distances(A).mean()/(2*(A.shape[1]))
         return S
         
     if hasattr(module, 'children'):
