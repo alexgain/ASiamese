@@ -40,7 +40,7 @@ parser.add_argument('--nhid', type=int, default=25, help='number of hidden units
 parser.add_argument('--tasks', default=50, type=int, help='no. of tasks')
 parser.add_argument('--hidden_size', default=64, type=int, help='hidden neurons')
 parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
-parser.add_argument('--prune_para', default=0.95, type=float, help='sparsity percentage pruned')
+parser.add_argument('--prune_para', default=0.999, type=float, help='sparsity percentage pruned')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
 parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
