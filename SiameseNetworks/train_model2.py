@@ -210,6 +210,13 @@ for j in range(len(dataloaders)):
             print("Pruning...")
             _prune(net,task=j,prune_para=args.prune_para)
     
+    if j == 0:
+        optimizer = torch.optim.Adam([
+                {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':0},
+                {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':1e-4,'momentum':0.85,'weight_decay':args.decay}
+            ])
+
+    
     _prune_freeze(net,task=j,prune_para=args.prune_para)
     
     print("Test acc for all tasks:")
