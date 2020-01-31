@@ -30,11 +30,11 @@ parser = argparse.ArgumentParser(description='Sequence Modeling - (Permuted) Seq
 parser.add_argument('--batch_size', type=int, default=16, help='batch size (default: 64)')
 parser.add_argument('--cuda', action='store_true', help='use CUDA (default: True)')
 parser.add_argument('--epochs', type=int, default=30, help='upper epoch limit (default: 30)')
-parser.add_argument('--epochs2', type=int, default=30, help='number of epochs for subsequent tasks.')
+parser.add_argument('--epochs2', type=int, default=0, help='number of epochs for subsequent tasks.')
 parser.add_argument('--lr', type=float, default=1e-4, help='initial learning rate (default: 2e-3)')
-parser.add_argument('--lr2', type=float, default=0, help='second learning rate')
-parser.add_argument('--lr_adj', type=float, default=1e-3, help='adj learning rate')
-parser.add_argument('--decay', type=float, default=0.85, help='adj decay rate')
+parser.add_argument('--lr2', type=float, default=-1, help='second learning rate')
+parser.add_argument('--lr_adj', type=float, default=-1, help='adj learning rate')
+parser.add_argument('--decay', type=float, default=0, help='adj decay rate')
 parser.add_argument('--optim', type=str, default='Adam', help='optimizer to use (default: Adam)')
 parser.add_argument('--nhid', type=int, default=25, help='number of hidden units per layer (default: 25)')
 parser.add_argument('--tasks', default=50, type=int, help='no. of tasks')
@@ -227,12 +227,18 @@ for j in range(len(dataloaders)):
             _prune(net,task=j,prune_para=args.prune_para)
     
     if j == 0:
+        if args.lr2 == -1:
+            args.lr2 = args.lr
+        if args.lr_adj == -1:
+            args.lr_adj = args.lr
+            
         optimizer = torch.optim.Adam([
                 {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':args.lr2},
                 {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0,'weight_decay':args.decay}
             ])
         
-        args.epochs=args.epochs2
+        if args.epoch2 > 0:
+            args.epochs=args.epochs2
         
 
     # _turn_off_adj(net,j)
