@@ -190,6 +190,7 @@ for j in range(len(dataloaders)):
     
     if args.freeze:
         cur_hooks = _freeze_grads(net, j)
+        print("Hooks:",cur_hooks)
     
     for epoch in range(args.epochs):
         
