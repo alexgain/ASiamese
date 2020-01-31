@@ -238,7 +238,7 @@ for j in range(len(dataloaders)):
                 {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0,'weight_decay':args.decay}
             ])
         
-        if args.epoch2 > 0:
+        if args.epochs2 > 0:
             args.epochs=args.epochs2
         
 
