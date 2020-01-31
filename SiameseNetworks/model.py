@@ -650,7 +650,8 @@ def _adj_spars_loss(module, task, S=0):
 
 def _freeze_grads(module, task, hooks = []):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        gradient_mask = ((module.adjx[0]) == 0.).data
+        if task > 0:
+            gradient_mask = ((module.adjx[0]) == 0.).data
         for k in range(1, task):
             gradient_mask = gradient_mask * ((module.adjx[k]) == 0.).data
         gradient_mask = gradient_mask.float()
