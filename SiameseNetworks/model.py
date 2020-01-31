@@ -176,7 +176,8 @@ class Classifier(nn.Module):
         for m in self.modules():
             if isinstance(m, AConv2d):
                 m.weight.data.normal_(0, 1e-2)
-                m.bias.data.normal_(0.5, 1e-2)
+                if m.bias is not None:
+                    m.bias.data.normal_(0.5, 1e-2)
             elif isinstance(m, ALinear):
                 m.weight.data.normal_(0, 2.0 * 1e-1)
                 if m.bias is not None:
