@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 class AConv2d(nn.Conv2d):
 
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, bias=True, datasets=1, same_init=False, Beta=False):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, bias=False, datasets=1, same_init=False, Beta=False):
         super().__init__(in_channels, out_channels, kernel_size, stride=stride, padding=padding, dilation=dilation, bias=bias)
         
         self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0, 1),requires_grad=True) for i in range(datasets)])
@@ -46,7 +46,7 @@ class AConv2d(nn.Conv2d):
 
 class ALinear(nn.Linear):
 
-    def __init__(self, in_features, out_features, bias=True, datasets=1, same_init=False, Beta=False):
+    def __init__(self, in_features, out_features, bias=False, datasets=1, same_init=False, Beta=False):
         super().__init__(in_features, out_features, bias)
         
         self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0, 1),requires_grad=True) for i in range(datasets)])

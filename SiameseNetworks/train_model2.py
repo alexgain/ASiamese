@@ -145,6 +145,8 @@ net = Classifier(image_size = args.im_size, output_shape=60, tasks=50, layer_siz
 if gpu_boole:
     net = net.cuda()
 # optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
+if args.lr_adj == -1:
+    args.lr_adj = args.lr
 optimizer = torch.optim.Adam([
                 {'params': (param for name, param in net.named_parameters() if 'adjx' not in name), 'lr':args.lr,'momentum':0},
                 {'params': (param for name, param in net.named_parameters() if 'adjx' in name), 'lr':args.lr_adj,'momentum':0,'weight_decay':args.decay}
