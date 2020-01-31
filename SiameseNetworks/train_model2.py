@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _adj_spars_loss
+from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _adj_spars_loss, _freeze_grads
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -182,10 +182,14 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
     del total; del correct; del loss_sum
     return acc, loss
     
+    
 ## Task Loop:
 for j in range(len(dataloaders)):
     
     train_loader, test_loader = dataloaders[j][0], dataloaders[j][1]
+    
+    if args.freeze:
+        cur_hooks = _freeze_grads(net, j)
     
     for epoch in range(args.epochs):
         
@@ -231,11 +235,12 @@ for j in range(len(dataloaders)):
         args.epochs=args.epochs2
         
 
-    _turn_off_adj(net,j)
+    # _turn_off_adj(net,j)
+    for h in cur_hooks: h.remove()
     
-    if args.freeze:
-        print("Freezing...")
-        _prune_freeze(net,task=j,prune_para=args.prune_para)
+    # if args.freeze:
+    #     print("Freezing...")
+    #     _prune_freeze(net,task=j,prune_para=args.prune_para)
     
     print("Test acc for all tasks:")
     total_test_acc = 0

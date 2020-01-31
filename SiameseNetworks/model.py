@@ -607,8 +607,7 @@ def _adj_ind_loss(module, task, S=0):
             
         # S += torch.sum(torch.Tensor([_adj_ind_loss(submodule, S) for submodule in module.children()]))
         return S
-        
-    
+            
 
 def _prune_freeze(module, task, prune_para):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
@@ -647,7 +646,21 @@ def _adj_spars_loss(module, task, S=0):
             
         # S += torch.sum(torch.Tensor([_adj_ind_loss(submodule, S) for submodule in module.children()]))
         return S
+
+def _freeze_grads(module, task, hooks = []):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        gradient_mask = ((module.adjx[0]) == 0.).data
+        for k in range(1, task):
+            gradient_mask = gradient_mask * ((module.adjx[k]) == 0.).data
+        gradient_mask = gradient_mask.float()
+        h = module.weight.register_hook(lambda grad: grad.mul_(gradient_mask))
+        return hooks + [h]                
+    if hasattr(module, 'children'):
+        for submodule in module.children():
+            hooks = hooks + _freeze_grads(submodule, task, hooks)
+        return hooks
         
+
     
 # def prune(self, p_para=0.5, task=None):
 #     for module in list(self.children()):
