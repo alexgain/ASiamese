@@ -138,7 +138,7 @@ def AconvLayer(in_channels, out_channels, keep_prob=0.0):
 import math
 
 class Classifier(nn.Module):
-    def __init__(self, layer_size=64, output_shape=55, num_channels=1, keep_prob=1.0, image_size=28, tasks = 1):
+    def __init__(self, layer_size=64, output_shape=55, num_channels=1, keep_prob=1.0, image_size=28, tasks = 1, bn_boole=False):
         super(Classifier, self).__init__()
         """
         Build a CNN to produce embeddings
@@ -152,10 +152,10 @@ class Classifier(nn.Module):
         self.conv3 = AConv2d(layer_size, layer_size, 3, 1, 1, datasets=tasks)
         self.conv4 = AConv2d(layer_size, layer_size, 3, 1, 1, datasets=tasks)
         
-        self.bn1 = nn.BatchNorm2d(layer_size)
-        self.bn2 = nn.BatchNorm2d(layer_size)
-        self.bn3 = nn.BatchNorm2d(layer_size)
-        self.bn4 = nn.BatchNorm2d(layer_size)
+        self.bn1 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn2 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn3 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn4 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
         
         self.mp1 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.mp2 = nn.MaxPool2d(kernel_size=2, stride=2)
@@ -196,10 +196,10 @@ class Classifier(nn.Module):
         # x = self.mp3(self.bn3(self.relu(self.conv3(x, dataset=task, round_ = round_))))
         # x = self.mp4(self.bn4(self.relu(self.conv4(x, dataset=task, round_ = round_))))
 
-        x = self.mp1(self.relu(self.conv1(image_input, dataset=task, round_ = round_)))
-        x = self.mp2(self.relu(self.conv2(x, dataset=task, round_ = round_)))
-        x = self.mp3(self.relu(self.conv3(x, dataset=task, round_ = round_)))
-        x = self.mp4(self.relu(self.conv4(x, dataset=task, round_ = round_)))
+        x = self.mp1(self.relu(self.bn1[task]((self.conv1(image_input, dataset=task, round_ = round_)))))
+        x = self.mp2(self.relu(self.bn2[task](self.conv2(x, dataset=task, round_ = round_))))
+        x = self.mp3(self.relu(self.bn3[task](self.conv3(x, dataset=task, round_ = round_))))
+        x = self.mp4(self.relu(self.bn4[task](self.conv4(x, dataset=task, round_ = round_))))
 
         x = x.view(x.size()[0], -1)
         x = self.linear(x, dataset=task, round_ = round_)
