@@ -211,7 +211,7 @@ for j in range(len(dataloaders)):
             if args.adj_ind > 0 and j > 0:
                 loss -= args.adj_ind *_adj_ind_loss(net,j+1)
             if args.adj_spars > 0:
-                loss += args.adj_spars * _adj_spars_loss(net, j)
+                loss += args.adj_spars * _adj_spars_loss(net, j, tol = 0.02, prune_para = args.prune_para)
             
             loss.backward()
             optimizer.step()

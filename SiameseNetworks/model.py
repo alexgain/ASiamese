@@ -588,7 +588,7 @@ def _adj_ind_loss(module, task, S=0):
     if task==0:
         return 0
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
-        mask = (module.soft_round(module.adjx[task-1]) > 0.999).data
+        mask = (module.soft_round(module.adjx[task-1]) > 0.85).data
         if (mask.sum().float()/np.prod(mask.shape))>0.13:
             A = torch.stack(list(module.adjx[:task])).view(task,-1)
             # A = torch.stack([module.soft_round(m) for m in list(module.adjx[:task])]).view(task,-1)
@@ -630,17 +630,17 @@ def _turn_off_adj(module, task):
         for submodule in module.children():
             _turn_off_adj(submodule, task)
     
-def _adj_spars_loss(module, task, S=0):
+def _adj_spars_loss(module, task, S=0, tol = 0.13, prune_para = 0.95):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
-        mask = (module.soft_round(module.adjx[task]) > 0.95).data
-        if (mask.sum().float()/np.prod(mask.shape))>0.13:
+        mask = (module.soft_round(module.adjx[task]) > prune_para).data
+        if (mask.sum().float()/np.prod(mask.shape)) > tol:
             S += (module.adjx[task].norm(p=1)/module.adjx[task].view(-1).shape[0])
         return S
         
     if hasattr(module, 'children'):
         n = 0
         for submodule in module.children():
-            S += _adj_spars_loss(submodule, task=task, S=S)
+            S += _adj_spars_loss(submodule, task=task, S=S, tol = tol, prune_para = prune_para)
             n+=1
         if n > 0:
             S /= n
