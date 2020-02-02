@@ -553,13 +553,14 @@ class ASiameseNetworks2(Module):
 
 def _prune(module, task, prune_para):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) > prune_para).data
-        print("Params alive:",mask.sum().float()/np.prod(mask.shape))
-        l = module.adjx[task]*mask.float()
-        module.adjx[task].data.copy_(l.data)
-        # A = module.soft_round(module.adjx[task]).byte().float() * module.adjx[task]
-        # module.adjx[task].data.copy_(A.data)
-        # print("Params alive:",module.soft_round(module.adjx[task]).byte().sum().float()/np.prod(module.adjx[task].shape))
+        if not module.multi:
+            mask = (module.soft_round(module.adjx[task]) > prune_para).data
+            print("Params alive:",mask.sum().float()/np.prod(mask.shape))
+            l = module.adjx[task]*mask.float()
+            module.adjx[task].data.copy_(l.data)
+            # A = module.soft_round(module.adjx[task]).byte().float() * module.adjx[task]
+            # module.adjx[task].data.copy_(A.data)
+            # print("Params alive:",module.soft_round(module.adjx[task]).byte().sum().float()/np.prod(module.adjx[task].shape))
         
     if hasattr(module, 'children'):
         for submodule in module.children():
@@ -592,15 +593,16 @@ def _adj_ind_loss(module, task, S=0):
     if task==0:
         return 0
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
-        mask = (module.soft_round(module.adjx[task-1]) > 0.85).data
-        if (mask.sum().float()/np.prod(mask.shape))>0.13:
-            A = torch.stack(list(module.adjx[:task])).view(task,-1)
-            # A = torch.stack([module.soft_round(m) for m in list(module.adjx[:task])]).view(task,-1)
-            # if torch.cuda.is_available():
-            #     A = A.cuda()
-            # S = pairwise_distances(A).mean()/2
-            S += pairwise_distances(A).mean()/(2*(A.shape[1]))
-        return S
+        if not module.multi:
+            mask = (module.soft_round(module.adjx[task-1]) > 0.85).data
+            if (mask.sum().float()/np.prod(mask.shape))>0.13:
+                A = torch.stack(list(module.adjx[:task])).view(task,-1)
+                # A = torch.stack([module.soft_round(m) for m in list(module.adjx[:task])]).view(task,-1)
+                # if torch.cuda.is_available():
+                #     A = A.cuda()
+                # S = pairwise_distances(A).mean()/2
+                S += pairwise_distances(A).mean()/(2*(A.shape[1]))
+            return S
         
     if hasattr(module, 'children'):
         n = 0
@@ -616,30 +618,33 @@ def _adj_ind_loss(module, task, S=0):
 
 def _prune_freeze(module, task, prune_para):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) <= prune_para).data
-        print("Params to prune:",mask.sum().float()/np.prod(mask.shape))
-        for k in range(len(module.adjx)):
-            if k==task:
-                continue
-            l = module.adjx[k]*mask.float()
-            module.adjx[k].data.copy_(l.data)
+        if not module.multi:
+            mask = (module.soft_round(module.adjx[task]) <= prune_para).data
+            print("Params to prune:",mask.sum().float()/np.prod(mask.shape))
+            for k in range(len(module.adjx)):
+                if k==task:
+                    continue
+                l = module.adjx[k]*mask.float()
+                module.adjx[k].data.copy_(l.data)
     if hasattr(module, 'children'):
         for submodule in module.children():
             _prune_freeze(submodule, task, prune_para)
 
 def _turn_off_adj(module, task):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        module.adjx[task].requires_grad=False
+        if not module.multi:
+            module.adjx[task].requires_grad=False
     if hasattr(module, 'children'):
         for submodule in module.children():
             _turn_off_adj(submodule, task)
     
 def _adj_spars_loss(module, task, S=0, tol = 0.13, prune_para = 0.95):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
-        mask = (module.soft_round(module.adjx[task]) > prune_para).data
-        if (mask.sum().float()/np.prod(mask.shape)) > tol:
-            S += (module.adjx[task].norm(p=1)/module.adjx[task].view(-1).shape[0])
-        return S
+        if not module.multi:
+            mask = (module.soft_round(module.adjx[task]) > prune_para).data
+            if (mask.sum().float()/np.prod(mask.shape)) > tol:
+                S += (module.adjx[task].norm(p=1)/module.adjx[task].view(-1).shape[0])
+            return S
         
     if hasattr(module, 'children'):
         n = 0
@@ -655,13 +660,14 @@ def _adj_spars_loss(module, task, S=0, tol = 0.13, prune_para = 0.95):
 def _freeze_grads(module, task, hooks = []):
     if task == 0:
         return []
-    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):        
-        gradient_mask = (1-(module.soft_round(module.adjx[0]).byte().float())).data
-        for k in range(1, task):
-            gradient_mask = gradient_mask * (1-(module.soft_round(module.adjx[k]).byte().float())).data
-        gradient_mask = gradient_mask.float()
-        h = module.weight.register_hook(lambda grad: grad.mul_(gradient_mask))
-        return hooks + [h]                
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        if not module.multi:
+            gradient_mask = (1-(module.soft_round(module.adjx[0]).byte().float())).data
+            for k in range(1, task):
+                gradient_mask = gradient_mask * (1-(module.soft_round(module.adjx[k]).byte().float())).data
+            gradient_mask = gradient_mask.float()
+            h = module.weight.register_hook(lambda grad: grad.mul_(gradient_mask))
+            return hooks + [h]                
     if hasattr(module, 'children'):
         for submodule in module.children():
             hooks = hooks + _freeze_grads(submodule, task, hooks)
