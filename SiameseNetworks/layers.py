@@ -10,7 +10,7 @@ class AConv2d(nn.Conv2d):
         super().__init__(in_channels, out_channels, kernel_size, stride=stride, padding=padding, dilation=dilation, bias=bias)
         
         self.multi=False
-        self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0.40, 0.55),requires_grad=True) for i in range(datasets)])
+        self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0.42, 0.55),requires_grad=True) for i in range(datasets)])
         if same_init:
             for ix in range(1, datasets):
                 self.adjx[ix] = self.adjx[0]
@@ -52,7 +52,7 @@ class ALinear(nn.Linear):
     def __init__(self, in_features, out_features, bias=False, datasets=1, same_init=False, Beta=False, multi=False):
         super().__init__(in_features, out_features, bias)
         
-        self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0.40, 0.55),requires_grad=True) for i in range(datasets)])
+        self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0.42, 0.55),requires_grad=True) for i in range(datasets)])
         if same_init:
             for ix in range(1, datasets):
                 self.adjx[ix] = self.adjx[0]
