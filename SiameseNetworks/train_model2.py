@@ -146,7 +146,7 @@ for i in range(len(all_xy)):
     dataloaders.append([train_loader,test_loader])
 
 ## model and optimizer instantiations:
-net = Classifier(image_size = args.im_size, output_shape=60, tasks=50, layer_size=args.hidden_size)
+net = Classifier(image_size = args.im_size, output_shape=60, tasks=50, layer_size=args.hidden_size, bn_boole=True)
 if gpu_boole:
     net = net.cuda()
 # optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
