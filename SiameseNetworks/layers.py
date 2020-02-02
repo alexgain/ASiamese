@@ -10,7 +10,7 @@ class AConv2d(nn.Conv2d):
         super().__init__(in_channels, out_channels, kernel_size, stride=stride, padding=padding, dilation=dilation, bias=bias)
         
         self.multi=False
-        self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0.42, 0.55),requires_grad=True) for i in range(datasets)])
+        self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0.43, 0.55),requires_grad=True) for i in range(datasets)])
         if same_init:
             for ix in range(1, datasets):
                 self.adjx[ix] = self.adjx[0]
