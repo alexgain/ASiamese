@@ -23,13 +23,15 @@ class AConv2d(nn.Conv2d):
     def soft_round(self, x, beta = 100):
         return (1 / (1 + torch.exp(-(beta * (x - 0.5)))))
         
-    def forward(self, input, dataset):
-        # try:
+    def forward(self, input, dataset, round_=False):
+        if round_:
+            if self.Beta:
+                return F.conv2d(input, self.soft_round(self.adjx[dataset], self.beta).round()*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
+            return F.conv2d(input, self.soft_round(self.adjx[dataset]).round()*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
+            
         if self.Beta:
             return F.conv2d(input, self.soft_round(self.adjx[dataset], self.beta)*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
         return F.conv2d(input, self.soft_round(self.adjx[dataset])*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
-        # except:
-        #     print("Conv DatasetError - input shape {}, dataset {}, adjacencies {}".format(input.shape, dataset, len(self.adjx)))
 
     def get_nconnections(self, dataset):
         try:
@@ -62,10 +64,14 @@ class ALinear(nn.Linear):
     def soft_round(self, x, beta = 100):
         return (1 / (1 + torch.exp(-(beta * (x - 0.5)))))
         
-    def forward(self, input, dataset):
+    def forward(self, input, dataset, round_ = False):
+        if round_:
+            try:
+                return F.linear(input, self.soft_round(self.adjx[dataset]).round()*self.weight, self.bias)
+            except Exception as e:
+                print("DatasetError: {}".format(e))            
+
         try:
-            # if not self.Beta:
-            #     return F.linear(input, self.soft_round(self.adjx[dataset], self.beta)*self.weight, self.bias)
             return F.linear(input, self.soft_round(self.adjx[dataset])*self.weight, self.bias)
         except Exception as e:
             print("DatasetError: {}".format(e))

@@ -41,6 +41,7 @@ parser.add_argument('--tasks', default=50, type=int, help='no. of tasks')
 parser.add_argument('--hidden_size', default=64, type=int, help='hidden neurons')
 parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
 parser.add_argument('--prune_para', default=0.999, type=float, help='sparsity percentage pruned')
+parser.add_argument('--tol', default=0.13, type=float, help='sparsity loss tolerance')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
 parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
@@ -155,7 +156,7 @@ optimizer = torch.optim.Adam([
 ## train, test eval:
 loss_metric = torch.nn.CrossEntropyLoss()
 
-def dataset_eval(data_loader, verbose = 1, task = 0):
+def dataset_eval(data_loader, verbose = 1, task = 0, round_=False):
     correct = 0
     total = 0
     loss_sum = 0
@@ -164,7 +165,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0):
             images, labels = images.cuda(), labels.cuda()
         # images = images.view(-1, 28*28)
         labels = labels.view(-1).cpu()
-        outputs = net(images, task = task).cpu()
+        outputs = net(images, task = task, round_=round_).cpu()
         _, predicted = torch.max(outputs.cpu().data, 1)
         total += labels.size(0)
         correct += (predicted.float() == labels.float()).sum().cpu().data.numpy().item()
@@ -220,6 +221,7 @@ for j in range(len(dataloaders)):
         
         train_acc, train_loss = dataset_eval(train_loader, verbose = 0, task = j)
         test_acc, test_loss= dataset_eval(test_loader, verbose = 0, task = j)
+        test_acc_true, test_loss_true= dataset_eval(test_loader, verbose = 0, task = j, round_=True)
         print("Train acc, Train loss", train_acc, train_loss)
         print("Test acc, Test loss", test_acc, test_loss)
         print()
