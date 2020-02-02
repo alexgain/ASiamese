@@ -45,6 +45,7 @@ parser.add_argument('--tol', default=0.13, type=float, help='sparsity loss toler
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
 parser.add_argument('--prune_freq', default=0, type=int, help='prune epoch schedule')
+parser.add_argument('--prune_once', action='store_true', help='prune epoch schedule but only once')
 parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
 parser.add_argument('--adj_spars', default=0, type=float, help='adj sparsity loss.')
 args = parser.parse_args()
@@ -186,7 +187,8 @@ def dataset_eval(data_loader, verbose = 1, task = 0, round_=False):
     del total; del correct; del loss_sum
     return acc, loss
     
-    
+pruned = False
+
 ## Task Loop:
 for j in range(len(dataloaders)):
     
@@ -231,11 +233,13 @@ for j in range(len(dataloaders)):
         if (epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch):
             print("Pruning...")
             _prune(net,task=j,prune_para=args.prune_para)
+            pruned=True
         elif args.prune_freq>0:
-            if (epoch%args.prune_freq==0 and epoch>0):
+            if (epoch%args.prune_freq==0 and epoch>0) and (not args.prune_once or not pruned):                    
                 print("Pruning...")
                 _prune(net,task=j,prune_para=args.prune_para)
-    
+                pruned=True
+                
     if j == 0:
         if args.lr2 == -1:
             args.lr2 = args.lr
