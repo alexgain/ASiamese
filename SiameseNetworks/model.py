@@ -185,19 +185,19 @@ class Classifier(nn.Module):
         
         # self.linear = ALinear(self.outsize,1)
 
-    def forward(self, image_input, task = 0):
+    def forward(self, image_input, task = 0, round_ = False):
         """
         Use CNN defined above
         :param image_input:
         :return:
         """
-        x = self.mp1(self.bn1(self.relu(self.conv1(image_input, dataset=task))))
-        x = self.mp2(self.bn2(self.relu(self.conv2(x, dataset=task))))
-        x = self.mp3(self.bn3(self.relu(self.conv3(x, dataset=task))))
-        x = self.mp4(self.bn4(self.relu(self.conv4(x, dataset=task))))
+        x = self.mp1(self.bn1(self.relu(self.conv1(image_input, dataset=task, round_ = round_))))
+        x = self.mp2(self.bn2(self.relu(self.conv2(x, dataset=task, round_ = round_))))
+        x = self.mp3(self.bn3(self.relu(self.conv3(x, dataset=task, round_ = round_))))
+        x = self.mp4(self.bn4(self.relu(self.conv4(x, dataset=task, round_ = round_))))
 
         x = x.view(x.size()[0], -1)
-        x = self.linear(x, dataset=task)
+        x = self.linear(x, dataset=task, round_ = round_)
         # x = self.sm(x)
         return x
 
