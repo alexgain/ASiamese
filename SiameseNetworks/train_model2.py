@@ -212,7 +212,7 @@ for j in range(len(dataloaders)):
             if args.adj_ind > 0 and j > 0:
                 loss -= args.adj_ind *_adj_ind_loss(net,j+1)
             if args.adj_spars > 0:
-                loss += args.adj_spars * _adj_spars_loss(net, j, tol = 0.02, prune_para = args.prune_para)
+                loss += args.adj_spars * _adj_spars_loss(net, j, tol = args.tol, prune_para = args.prune_para)
             
             loss.backward()
             optimizer.step()
@@ -224,6 +224,7 @@ for j in range(len(dataloaders)):
         test_acc_true, test_loss_true= dataset_eval(test_loader, verbose = 0, task = j, round_=True)
         print("Train acc, Train loss", train_acc, train_loss)
         print("Test acc, Test loss", test_acc, test_loss)
+        print("Test acc, Test loss (Rounded Adj)", test_acc_true, test_loss_true)
         print()
 
         if epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch:
