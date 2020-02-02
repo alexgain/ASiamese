@@ -235,11 +235,11 @@ for j in range(len(dataloaders)):
             _prune(net,task=j,prune_para=args.prune_para)
             pruned=True
         elif args.prune_freq>0 and args.prune_times==-1:
-            if (epoch%args.prune_freq==0 and epoch>0) and (not args.prune_once or not pruned):                    
+            if (epoch%args.prune_freq==0 and epoch>0):                    
                 print("Pruning...")
                 _prune(net,task=j,prune_para=args.prune_para)
         elif args.prune_freq>0 and args.prune_times>0:
-            if (epoch%args.prune_freq==0 and epoch>0) and (not args.prune_once or not pruned):                    
+            if (epoch%args.prune_freq==0 and epoch>0):                    
                 print("Pruning...")
                 _prune(net,task=j,prune_para=args.prune_para)
                 args.prune_times -= 1
