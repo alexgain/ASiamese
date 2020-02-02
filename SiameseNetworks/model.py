@@ -152,10 +152,10 @@ class Classifier(nn.Module):
         self.conv3 = AConv2d(layer_size, layer_size, 3, 1, 1, datasets=tasks)
         self.conv4 = AConv2d(layer_size, layer_size, 3, 1, 1, datasets=tasks)
         
-        self.bn1 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
-        self.bn2 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
-        self.bn3 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
-        self.bn4 = nn.ParameterList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn1 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn2 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn3 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn4 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
         
         self.mp1 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.mp2 = nn.MaxPool2d(kernel_size=2, stride=2)
