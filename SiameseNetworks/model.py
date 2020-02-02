@@ -558,6 +558,7 @@ def _prune(module, task, prune_para):
         # l = module.adjx[task]*mask.float()
         # module.adjx[task].data.copy_(l.data)
         module.adjx[task] = module.adjx[task].byte().float()
+        print("Params alive:",module.adjx[task].byte().sum().float()/np.prod(module.adjx[task].shape))
         
     if hasattr(module, 'children'):
         for submodule in module.children():
