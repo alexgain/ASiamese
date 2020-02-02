@@ -45,7 +45,7 @@ parser.add_argument('--tol', default=0.13, type=float, help='sparsity loss toler
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
 parser.add_argument('--prune_freq', default=0, type=int, help='prune epoch schedule')
-parser.add_argument('--prune_times', default=-1, type=int, help)
+parser.add_argument('--prune_times', default=-1, type=int, help="number of times to prune for prune_freq")
 parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
 parser.add_argument('--adj_spars', default=0, type=float, help='adj sparsity loss.')
 args = parser.parse_args()
