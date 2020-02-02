@@ -557,9 +557,9 @@ def _prune(module, task, prune_para):
         # print("Params alive:",mask.sum().float()/np.prod(mask.shape))
         # l = module.adjx[task]*mask.float()
         # module.adjx[task].data.copy_(l.data)
-        A = module.soft_round(module.adjx[task], beta=module.beta).byte().float() * module.adjx[task]
+        A = module.soft_round(module.adjx[task]).byte().float() * module.adjx[task]
         module.adjx[task].data.copy_(A.data)
-        print("Params alive:",module.soft_round(module.adjx[task], beta=module.beta).byte().sum().float()/np.prod(module.adjx[task].shape))
+        print("Params alive:",module.soft_round(module.adjx[task]).byte().sum().float()/np.prod(module.adjx[task].shape))
         
     if hasattr(module, 'children'):
         for submodule in module.children():
