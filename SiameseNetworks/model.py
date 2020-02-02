@@ -651,6 +651,15 @@ def _turn_off_weights(module):
         for submodule in module.children():
             _turn_off_weights(submodule)
 
+
+def _turn_off_multi_weights(module, task):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        if module.multi:
+            module.weight[task].requires_grad=False
+    if hasattr(module, 'children'):
+        for submodule in module.children():
+            _turn_off_weights(submodule)
+
     
 def _adj_spars_loss(module, task, S=0, tol = 0.13, prune_para = 0.95):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
@@ -676,11 +685,11 @@ def _freeze_grads(module, task, hooks = []):
         return []
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
         if not module.multi:
-            gradient_mask = (1-(module.soft_round(module.adjx[0]).byte().float())).data
+            gradient_mask = (module.soft_round(module.adjx[0]).byte()==0.).data
             # gradient_mask = (module.adjx[0]==0.).data
             for k in range(1, task):
                 # gradient_mask = gradient_mask * (module.adjx[k]==0.).data
-                gradient_mask = (1-(module.soft_round(module.adjx[k]).byte().float())).data
+                gradient_mask = (module.soft_round(module.adjx[0]).byte()==0.).data
             gradient_mask = gradient_mask.float()
             h = module.weight.register_hook(lambda grad: grad.mul_(gradient_mask))
             return hooks + [h]                

@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _turn_off_weights, _adj_spars_loss, _freeze_grads
+from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _turn_off_weights, _turn_off_multi_weights, _adj_spars_loss, _freeze_grads
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -247,7 +247,9 @@ for j in range(len(dataloaders)):
                 print("Pruning...")
                 _prune(net,task=j,prune_para=args.prune_para)
                 args.prune_times -= 1
-                
+         
+            
+    if j==0:
         if args.lr2 == -1:
             args.lr2 = args.lr
         if args.lr_adj == -1:
@@ -263,10 +265,11 @@ for j in range(len(dataloaders)):
         
     if j==0:
         if args.turn_off_weights:
-            _turn_off_weights(net)
+            _turn_off_weights(net)            
         
     _turn_off_adj(net,j)
-
+    _turn_off_multi_weights(net,j)
+    
     if args.freeze:
         if j > 0:
             for h in cur_hooks: h.remove()
