@@ -266,17 +266,17 @@ for j in range(len(dataloaders)):
     
     print("Test acc for all tasks:")
     total_test_acc = 0
-    for j2 in range(len(dataloaders)):
+    for j2 in range(j+1):
         print("Task:",j2)
         test_acc, test_loss = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2)
-        # test_loss, test_acc = dataset_eval(dataloaders[j2][1], verbose = 0, task = 1)
-        # print("Train acc, Train loss", train_loss, train_acc)
-        print("Test acc:",test_acc)
-        print("Test loss:",test_loss)
+        print("Test acc, Test loss:",test_acc, test_loss)
+
+        test_acc, test_loss = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2, round_=True)
+        print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
         
         total_test_acc += test_acc
     
-    total_test_acc /= len(dataloaders)
+    total_test_acc /= j+1
     print("Total test acc:",total_test_acc)
 
 
