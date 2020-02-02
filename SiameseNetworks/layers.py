@@ -67,6 +67,8 @@ class ALinear(nn.Linear):
     def forward(self, input, dataset, round_ = False):
         if round_:
             try:
+                A = self.soft_round(self.adjx[dataset]).round()
+                print(A.min(),A.max())
                 return F.linear(input, self.soft_round(self.adjx[dataset]).round()*self.weight, self.bias)
             except Exception as e:
                 print("DatasetError: {}".format(e))            
