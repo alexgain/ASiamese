@@ -553,10 +553,12 @@ class ASiameseNetworks2(Module):
 
 def _prune(module, task, prune_para):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
-        mask = (module.soft_round(module.adjx[task]) > prune_para).data
-        print("Params alive:",mask.sum().float()/np.prod(mask.shape))
-        l = module.adjx[task]*mask.float()
-        module.adjx[task].data.copy_(l.data)
+        # mask = (module.soft_round(module.adjx[task]) > prune_para).data
+        # print("Params alive:",mask.sum().float()/np.prod(mask.shape))
+        # l = module.adjx[task]*mask.float()
+        # module.adjx[task].data.copy_(l.data)
+        module.adjx[task] = module.adjx[task].byte().float()
+        
     if hasattr(module, 'children'):
         for submodule in module.children():
             _prune(submodule, task, prune_para)
