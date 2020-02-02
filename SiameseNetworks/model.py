@@ -656,9 +656,9 @@ def _freeze_grads(module, task, hooks = []):
     if task == 0:
         return []
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):        
-        gradient_mask = ((module.adjx[0]) == 0.).data
+        gradient_mask = ((module.soft_round(module.adjx[0]).byte().float()) == 0.).data
         for k in range(1, task):
-            gradient_mask = gradient_mask * ((module.adjx[k]) == 0.).data
+            gradient_mask = gradient_mask * ((module.soft_round(module.adjx[k]).byte().float()) == 0.).data
         gradient_mask = gradient_mask.float()
         h = module.weight.register_hook(lambda grad: grad.mul_(gradient_mask))
         return hooks + [h]                
