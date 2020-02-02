@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _adj_spars_loss, _freeze_grads
+from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _turn_off_weights, _adj_spars_loss, _freeze_grads
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -261,9 +261,12 @@ for j in range(len(dataloaders)):
         if args.epochs2 > 0:
             args.epochs=args.epochs2
         
+    if j==0:
+        if args.turn_off_weights:
+            _turn_off_weights(net)
+        
+    _turn_off_adj(net,j)
 
-    if args.turn_off_adj:
-        _turn_off_adj(net,j)
     if args.freeze:
         if j > 0:
             for h in cur_hooks: h.remove()

@@ -637,6 +637,15 @@ def _turn_off_adj(module, task):
     if hasattr(module, 'children'):
         for submodule in module.children():
             _turn_off_adj(submodule, task)
+
+def _turn_off_weights(module):
+    if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):
+        if not module.multi:
+            module.weight.requires_grad=False
+    if hasattr(module, 'children'):
+        for submodule in module.children():
+            _turn_off_weights(submodule)
+
     
 def _adj_spars_loss(module, task, S=0, tol = 0.13, prune_para = 0.95):
     if any([isinstance(module, ALinear), isinstance(module, AConv2d), module.__class__.__name__=="AConv2d"]):
