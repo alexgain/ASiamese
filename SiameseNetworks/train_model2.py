@@ -228,9 +228,13 @@ for j in range(len(dataloaders)):
         print("Test acc, Test loss (Rounded Adj)", test_acc_true, test_loss_true)
         print()
 
-        if (epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch) or (epoch%args.prune_freq==0 and epoch>0):
+        if (epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch):
             print("Pruning...")
             _prune(net,task=j,prune_para=args.prune_para)
+        elif args.prune_freq>0:
+            if (epoch%args.prune_freq==0 and epoch>0):
+                print("Pruning...")
+                _prune(net,task=j,prune_para=args.prune_para)
     
     if j == 0:
         if args.lr2 == -1:
