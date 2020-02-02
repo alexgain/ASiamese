@@ -25,9 +25,11 @@ class AConv2d(nn.Conv2d):
         
     def forward(self, input, dataset, round_=False):
         if round_:
+            A = self.soft_round(self.adjx[dataset]).round()
+            print(A.min(),A.max())
             if self.Beta:
-                return F.conv2d(input, self.soft_round(self.adjx[dataset], self.beta).round()*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
-            return F.conv2d(input, self.soft_round(self.adjx[dataset]).round()*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
+                return F.conv2d(input, (self.soft_round(self.adjx[dataset], self.beta).round())*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
+            return F.conv2d(input, (self.soft_round(self.adjx[dataset]).round())*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
             
         if self.Beta:
             return F.conv2d(input, self.soft_round(self.adjx[dataset], self.beta)*self.weight, bias=self.bias, stride=self.stride, padding=self.padding, dilation=self.dilation)
@@ -69,7 +71,7 @@ class ALinear(nn.Linear):
             try:
                 A = self.soft_round(self.adjx[dataset]).round()
                 print(A.min(),A.max())
-                return F.linear(input, self.soft_round(self.adjx[dataset]).round()*self.weight, self.bias)
+                return F.linear(input, (self.soft_round(self.adjx[dataset]).round())*self.weight, self.bias)
             except Exception as e:
                 print("DatasetError: {}".format(e))            
 
