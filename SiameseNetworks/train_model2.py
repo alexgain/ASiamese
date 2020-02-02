@@ -49,6 +49,7 @@ parser.add_argument('--prune_times', default=-1, type=int, help="number of times
 parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
 parser.add_argument('--adj_spars', default=0, type=float, help='adj sparsity loss.')
 args = parser.parse_args()
+prune_times_global = args.prune_times
 
 ## Getting Dataloaders for Omniglot:
 
@@ -196,6 +197,8 @@ for j in range(len(dataloaders)):
     
     if args.freeze:
         cur_hooks = _freeze_grads(net, j)
+
+    args.prune_times = prune_times_global
     
     for epoch in range(args.epochs):
         
@@ -244,7 +247,6 @@ for j in range(len(dataloaders)):
                 _prune(net,task=j,prune_para=args.prune_para)
                 args.prune_times -= 1
                 
-    if j == 0:
         if args.lr2 == -1:
             args.lr2 = args.lr
         if args.lr_adj == -1:
