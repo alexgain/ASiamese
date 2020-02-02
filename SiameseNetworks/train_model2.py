@@ -44,7 +44,7 @@ parser.add_argument('--prune_para', default=0.999, type=float, help='sparsity pe
 parser.add_argument('--tol', default=0.13, type=float, help='sparsity loss tolerance')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
-parser.add_argument('--prune_freq', default=0, type=int, help='prune epoch diff')
+parser.add_argument('--prune_freq', default=0, type=int, help='prune epoch schedule')
 parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
 parser.add_argument('--adj_spars', default=0, type=float, help='adj sparsity loss.')
 args = parser.parse_args()
@@ -228,7 +228,7 @@ for j in range(len(dataloaders)):
         print("Test acc, Test loss (Rounded Adj)", test_acc_true, test_loss_true)
         print()
 
-        if epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch:
+        if (epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch) or (epoch%args.prune_freq==0 and epoch>0):
             print("Pruning...")
             _prune(net,task=j,prune_para=args.prune_para)
     
