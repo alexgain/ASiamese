@@ -198,6 +198,7 @@ for j in range(len(dataloaders)):
     
     if args.freeze:
         cur_hooks = _freeze_grads(net, j)
+        print(cur_hooks)
 
     args.prune_times = prune_times_global
     
