@@ -169,7 +169,7 @@ class Classifier(nn.Module):
         finalSize = int(math.floor(image_size / (2 * 2 * 2 * 2)))
         self.outSize = finalSize * finalSize * layer_size
 
-        self.linear = ALinear(self.outSize, output_shape, datasets=tasks)   
+        self.linear = ALinear(self.outSize, output_shape, datasets=tasks, multi=True)   
         self._weight_init()
 
     def _weight_init(self):
@@ -656,9 +656,9 @@ def _freeze_grads(module, task, hooks = []):
     if task == 0:
         return []
     if any([isinstance(module, ALinear), isinstance(module, AConv2d)]):        
-        gradient_mask = ((module.soft_round(module.adjx[0]).byte().float()) == 0.).data
+        gradient_mask = (1-(module.soft_round(module.adjx[0]).byte().float())).data
         for k in range(1, task):
-            gradient_mask = gradient_mask * ((module.soft_round(module.adjx[k]).byte().float()) == 0.).data
+            gradient_mask = gradient_mask * (1-(module.soft_round(module.adjx[k]).byte().float())).data
         gradient_mask = gradient_mask.float()
         h = module.weight.register_hook(lambda grad: grad.mul_(gradient_mask))
         return hooks + [h]                

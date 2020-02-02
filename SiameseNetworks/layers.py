@@ -48,13 +48,20 @@ class AConv2d(nn.Conv2d):
 
 class ALinear(nn.Linear):
 
-    def __init__(self, in_features, out_features, bias=False, datasets=1, same_init=False, Beta=False):
+    def __init__(self, in_features, out_features, bias=False, datasets=1, same_init=False, Beta=False, multi=False):
         super().__init__(in_features, out_features, bias)
         
         self.adjx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight.shape).uniform_(0, 1),requires_grad=True) for i in range(datasets)])
         if same_init:
             for ix in range(1, datasets):
                 self.adjx[ix] = self.adjx[0]
+        
+        self.multi = multi
+        if self.multi:
+            self.weightx = nn.ParameterList([nn.Parameter(torch.Tensor(self.weight),requires_grad=True) for i in range(datasets)])
+            for ix in range(datasets):
+                self.adjx[ix] = nn.Parameter(torch.ones(*self.adjx[ix].shape),requires_grad=False)
+
 
         # if Beta:
         #     self.Beta = Beta
@@ -65,14 +72,19 @@ class ALinear(nn.Linear):
         return (1 / (1 + torch.exp(-(beta * (x - 0.5)))))
         
     def forward(self, input, dataset, round_ = False):
+        if self.multi:
+            weight = self.weightx[dataset]
+        else:
+            weight = self.weight
+            
         if round_:
             try:
-                return F.linear(input, (self.soft_round(self.adjx[dataset]).round().byte().float())*self.weight, self.bias)
+                return F.linear(input, (self.soft_round(self.adjx[dataset]).round().byte().float())*weight, self.bias)
             except Exception as e:
                 print("DatasetError: {}".format(e))            
 
         try:
-            return F.linear(input, self.soft_round(self.adjx[dataset])*self.weight, self.bias)
+            return F.linear(input, self.soft_round(self.adjx[dataset])*weight, self.bias)
         except Exception as e:
             print("DatasetError: {}".format(e))
 
