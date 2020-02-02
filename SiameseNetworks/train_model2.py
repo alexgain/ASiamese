@@ -196,9 +196,6 @@ for j in range(len(dataloaders)):
     
     train_loader, test_loader = dataloaders[j][0], dataloaders[j][1]
     
-    if args.freeze:
-        cur_hooks = _freeze_grads(net, j)
-
     args.prune_times = prune_times_global
     
     for epoch in range(args.epochs):
@@ -266,6 +263,9 @@ for j in range(len(dataloaders)):
     print()
     print('Turn off weights?',args.turn_off_weights)
     print()
+
+    if args.freeze:
+        cur_hooks = _freeze_grads(net, j+1)
 
     if j==0:
         if args.turn_off_weights:
