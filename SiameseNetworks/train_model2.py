@@ -278,6 +278,7 @@ for j in range(len(dataloaders)):
     #     print("Freezing...")
     #     _prune_freeze(net,task=j,prune_para=args.prune_para)
     
+    print("--------------------------------")
     print("Test acc for all tasks:")
     total_test_acc = 0
     for j2 in range(j+1):
@@ -292,5 +293,6 @@ for j in range(len(dataloaders)):
     
     total_test_acc /= j+1
     print("Total test acc:",total_test_acc)
-
+    print("--------------------------------")
+    print()
 
