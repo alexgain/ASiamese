@@ -264,6 +264,7 @@ for j in range(len(dataloaders)):
     print('Turn off weights?',args.turn_off_weights)
     print()
 
+    print(args.freeze)
     if args.freeze:
         cur_hooks = _freeze_grads(net, j+1)
 
