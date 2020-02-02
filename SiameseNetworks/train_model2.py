@@ -43,6 +43,7 @@ parser.add_argument('--im_size', default=28, type=int, help='image dimensions')
 parser.add_argument('--prune_para', default=0.999, type=float, help='sparsity percentage pruned')
 parser.add_argument('--tol', default=0.13, type=float, help='sparsity loss tolerance')
 parser.add_argument('--freeze', action='store_true', help='freeze params')
+parser.add_argument('--turn_off_adj', action='store_true', help='turns off adjacencies after subsequent tasks')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
 parser.add_argument('--prune_freq', default=0, type=int, help='prune epoch schedule')
 parser.add_argument('--prune_times', default=-1, type=int, help="number of times to prune for prune_freq")
@@ -261,7 +262,8 @@ for j in range(len(dataloaders)):
             args.epochs=args.epochs2
         
 
-    # _turn_off_adj(net,j)
+    if args.turn_off_adj:
+        _turn_off_adj(net,j)
     if args.freeze:
         if j > 0:
             for h in cur_hooks: h.remove()
