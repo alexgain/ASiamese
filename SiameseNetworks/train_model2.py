@@ -45,7 +45,7 @@ parser.add_argument('--tol', default=0.13, type=float, help='sparsity loss toler
 parser.add_argument('--freeze', action='store_true', help='freeze params')
 parser.add_argument('--prune_epoch', default=0, type=int, help='prune epoch diff')
 parser.add_argument('--prune_freq', default=0, type=int, help='prune epoch schedule')
-parser.add_argument('--prune_once', action='store_true', help='prune epoch schedule but only once')
+parser.add_argument('--prune_times', default=-1, type=int, help)
 parser.add_argument('--adj_ind', default=0, type=float, help='adjacency independency loss.')
 parser.add_argument('--adj_spars', default=0, type=float, help='adj sparsity loss.')
 args = parser.parse_args()
@@ -234,11 +234,15 @@ for j in range(len(dataloaders)):
             print("Pruning...")
             _prune(net,task=j,prune_para=args.prune_para)
             pruned=True
-        elif args.prune_freq>0:
+        elif args.prune_freq>0 and args.prune_times==-1:
             if (epoch%args.prune_freq==0 and epoch>0) and (not args.prune_once or not pruned):                    
                 print("Pruning...")
                 _prune(net,task=j,prune_para=args.prune_para)
-                pruned=True
+        elif args.prune_freq>0 and args.prune_times>0:
+            if (epoch%args.prune_freq==0 and epoch>0) and (not args.prune_once or not pruned):                    
+                print("Pruning...")
+                _prune(net,task=j,prune_para=args.prune_para)
+                args.prune_times -= 1
                 
     if j == 0:
         if args.lr2 == -1:
