@@ -12,7 +12,7 @@ sys.path.append("..")
 
 # from common_utils.imgaug import RandomAffine, RandomApply
 
-from model import Classifier, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _turn_off_weights, _turn_off_multi_weights, _adj_spars_loss, _freeze_grads
+from model import Classifier, ClassifierMLP, _prune, _prune_freeze, _adj_ind_loss, _turn_off_adj, _turn_off_weights, _turn_off_multi_weights, _adj_spars_loss, _freeze_grads
 
 import numpy as np
 import matplotlib.pyplot as plt
