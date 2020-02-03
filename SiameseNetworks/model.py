@@ -206,6 +206,70 @@ class Classifier(nn.Module):
         # x = self.sm(x)
         return x
 
+class ClassifierMLP(nn.Module):
+    def __init__(self, layer_size=64, output_shape=55, input_size=784, num_channels=1, keep_prob=1.0, image_size=28, tasks = 1, bn_boole=False):
+        super(ClassifierMLP, self).__init__()
+        """
+        Build a CNN to produce embeddings
+        :param layer_size:64(default)
+        :param num_channels:
+        :param keep_prob:
+        :param image_size:
+        """
+        self.conv1 = ALinear(num_channels*num_channels, layer_size, datasets=tasks)
+        self.conv2 = ALinear(layer_size, layer_size, datasets=tasks)
+        self.conv3 = ALinear(layer_size, layer_size, datasets=tasks)
+        self.conv4 = ALinear(layer_size, layer_size, datasets=tasks)
+        
+        self.bn1 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn2 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn3 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn4 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+                        
+        self.do = nn.Dropout(keep_prob)
+        self.relu = nn.ReLU()
+        self.sm = nn.Sigmoid()
+        
+        self.outSize = layer_size
+
+        self.linear = ALinear(self.layer_size, output_shape, datasets=tasks, multi=True)   
+        self._weight_init()
+
+    def _weight_init(self):
+        for m in self.modules():
+            if isinstance(m, AConv2d):
+                m.weight.data.normal_(0, 1e-2)
+                if m.bias is not None:
+                    m.bias.data.normal_(0.5, 1e-2)
+            elif isinstance(m, ALinear):
+                m.weight.data.normal_(0, 2.0 * 1e-1)
+                if m.bias is not None:
+                    m.bias.data.normal_(0.5, 1e-2)
+        
+        # self.linear = ALinear(self.outsize,1)
+
+    def forward(self, image_input, task = 0, round_ = False):
+        """
+        Use CNN defined above
+        :param image_input:
+        :return:
+        """
+        # x = self.mp1(self.bn1(self.relu(self.conv1(image_input, dataset=task, round_ = round_))))
+        # x = self.mp2(self.bn2(self.relu(self.conv2(x, dataset=task, round_ = round_))))
+        # x = self.mp3(self.bn3(self.relu(self.conv3(x, dataset=task, round_ = round_))))
+        # x = self.mp4(self.bn4(self.relu(self.conv4(x, dataset=task, round_ = round_))))
+
+        x = self.mp1(self.relu(self.bn1[task]((self.conv1(image_input, dataset=task, round_ = round_)))))
+        x = self.mp2(self.relu(self.bn2[task](self.conv2(x, dataset=task, round_ = round_))))
+        x = self.mp3(self.relu(self.bn3[task](self.conv3(x, dataset=task, round_ = round_))))
+        x = self.mp4(self.relu(self.bn4[task](self.conv4(x, dataset=task, round_ = round_))))
+
+        x = x.view(x.size()[0], -1)
+        x = self.linear(x, dataset=task, round_ = round_)
+        # x = self.sm(x)
+        return x
+    
+    
 class Classifier2(nn.Module):
     def __init__(self, layer_size=64, num_channels=2, keep_prob=1.0, image_size=28, tasks = 1):
         super(Classifier2, self).__init__()
