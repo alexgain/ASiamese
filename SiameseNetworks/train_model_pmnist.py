@@ -75,7 +75,7 @@ test_loader = torch.utils.data.DataLoader(dataset=testing, batch_size = 128, shu
 permutations = [torch.Tensor(np.random.permutation(784).astype(np.float64)).long() for _ in range(args.tasks)]
 
 ## model and optimizer instantiations:
-net = Classifier(image_size = args.im_size, output_shape=10, tasks=50, layer_size=args.hidden_size, bn_boole=True)
+net = ClassifierMLP(image_size = args.im_size, output_shape=10, tasks=50, layer_size=args.hidden_size, bn_boole=True)
 if gpu_boole:
     net = net.cuda()
 # optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
@@ -97,7 +97,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0, round_=False):
         if gpu_boole:
             images, labels = images.cuda(), labels.cuda()
         
-        images = images.view(-1,28*28)[:,permutations[task]].view(images.shape[0],1,28,28)
+        images = images.view(-1,28*28)[:,permutations[task]]
         # images = images.view(-1, 28*28)
         labels = labels.view(-1).cpu()
         outputs = net(images, task = task, round_=round_).cpu()
@@ -136,7 +136,7 @@ for j in range(args.tasks):
             if gpu_boole:
                 x, y = x.cuda(), y.cuda()
                 
-            x = x.view(-1,28*28)[:,permutations[j]].view(x.shape[0],1,28,28)
+            x = x.view(-1,28*28)[:,permutations[j]]
                 
             y = y.view(-1)
             
