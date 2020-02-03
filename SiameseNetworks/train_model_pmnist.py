@@ -52,8 +52,8 @@ parser.add_argument('--adj_spars', default=0, type=float, help='adj sparsity los
 args = parser.parse_args()
 prune_times_global = args.prune_times
 
-training = torchvision.dataset.MNIST(root ='./data', transform=transforms.ToTensor(), train=True, download=True)
-testing =  torchvision.dataset.MNIST(root ='./data', transform = transforms.ToTensor(), train=False, download=True)
+training = torchvision.datasets.MNIST(root ='./data', transform=transforms.ToTensor(), train=True, download=True)
+testing =  torchvision.datasets.MNIST(root ='./data', transform = transforms.ToTensor(), train=False, download=True)
 train_loader = torch.utils.data.DataLoader(dataset=training, batch_size = 128, shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=testing, batch_size = 128, shuffle=False)
 
