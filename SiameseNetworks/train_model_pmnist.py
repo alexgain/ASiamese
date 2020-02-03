@@ -82,7 +82,7 @@ def dataset_eval(data_loader, verbose = 1, task = 0, round_=False):
         if gpu_boole:
             images, labels = images.cuda(), labels.cuda()
         
-        images = images.view(-1,28*28)[:,permutations[task]]
+        images = images.view(-1,28*28)[:,permutations[task]].view(images.shape[0],1,28,28)
         # images = images.view(-1, 28*28)
         labels = labels.view(-1).cpu()
         outputs = net(images, task = task, round_=round_).cpu()
@@ -108,10 +108,8 @@ def dataset_eval(data_loader, verbose = 1, task = 0, round_=False):
 pruned = False
 
 ## Task Loop:
-for j in range(len(dataloaders)):
-    
-    train_loader, test_loader = dataloaders[j][0], dataloaders[j][1]
-    
+for j in range(args.tasks):
+        
     args.prune_times = prune_times_global
     
     for epoch in range(args.epochs):
@@ -122,6 +120,8 @@ for j in range(len(dataloaders)):
             
             if gpu_boole:
                 x, y = x.cuda(), y.cuda()
+                
+            x = x.view(-1,28*28)[:,permutations[j]].view(x.shape[0],1,28,28)
                 
             y = y.view(-1)
             
@@ -204,10 +204,10 @@ for j in range(len(dataloaders)):
     total_test_acc = 0
     for j2 in range(j+1):
         print("Task:",j2)
-        test_acc, test_loss = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2)
+        test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2)
         print("Test acc, Test loss:",test_acc, test_loss)
 
-        test_acc, test_loss = dataset_eval(dataloaders[j2][1], verbose = 0, task = j2, round_=True)
+        test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2, round_=True)
         print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
         
         total_test_acc += test_acc
