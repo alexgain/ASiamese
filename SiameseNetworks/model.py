@@ -216,7 +216,7 @@ class ClassifierMLP(nn.Module):
         :param keep_prob:
         :param image_size:
         """
-        self.conv1 = ALinear(num_channels*num_channels, layer_size, datasets=tasks)
+        self.conv1 = ALinear(num_channels*input_size, layer_size, datasets=tasks)
         self.conv2 = ALinear(layer_size, layer_size, datasets=tasks)
         self.conv3 = ALinear(layer_size, layer_size, datasets=tasks)
         self.conv4 = ALinear(layer_size, layer_size, datasets=tasks)
