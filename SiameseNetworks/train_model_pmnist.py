@@ -71,8 +71,8 @@ test_data_aug = Compose([
 
 training = torchvision.datasets.MNIST(root ='./data', transform = train_data_aug, train=True, download=True)
 testing =  torchvision.datasets.MNIST(root ='./data', transform = test_data_aug, train=False, download=True)
-train_loader = torch.utils.data.DataLoader(dataset=training, batch_size = 128, shuffle=True)
-test_loader = torch.utils.data.DataLoader(dataset=testing, batch_size = 128, shuffle=False)
+train_loader = torch.utils.data.DataLoader(dataset=training, batch_size = args.batch_size, shuffle=True)
+test_loader = torch.utils.data.DataLoader(dataset=testing, batch_size = args.batch_size, shuffle=False)
 
 permutations = [torch.Tensor(np.random.permutation(784).astype(np.float64)).long() for _ in range(args.tasks)]
 
