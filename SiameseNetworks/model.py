@@ -259,7 +259,7 @@ class ClassifierMLP(nn.Module):
         # x = self.mp3(self.bn3(self.relu(self.conv3(x, dataset=task, round_ = round_))))
         # x = self.mp4(self.bn4(self.relu(self.conv4(x, dataset=task, round_ = round_))))
 
-        x = self.relu(self.bn1[task]((self.conv1(image_input, dataset=task, round_ = round_))))
+        x = self.relu(self.bn1[task](self.conv1(image_input, dataset=task, round_ = round_)))
         x = self.relu(self.bn2[task](self.conv2(x, dataset=task, round_ = round_)))
         x = self.relu(self.bn3[task](self.conv3(x, dataset=task, round_ = round_)))
         x = self.relu(self.bn4[task](self.conv4(x, dataset=task, round_ = round_)))
