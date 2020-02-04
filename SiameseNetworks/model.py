@@ -232,7 +232,7 @@ class ClassifierMLP(nn.Module):
         
         self.outSize = layer_size
 
-        self.linear = ALinear(self.layer_size, output_shape, datasets=tasks, multi=True)   
+        self.linear = ALinear(layer_size, output_shape, datasets=tasks, multi=True)   
         self._weight_init()
 
     def _weight_init(self):
