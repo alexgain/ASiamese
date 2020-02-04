@@ -22,6 +22,8 @@ import imageio
 import glob
 import os
 
+import time
+
 gpu_boole = torch.cuda.is_available()
 
 import argparse
@@ -127,7 +129,11 @@ for j in range(args.tasks):
         
     args.prune_times = prune_times_global
     
+    
+    
     for epoch in range(args.epochs):
+                
+        t1 = time.time()
         
         print("Task:",j,"- Epoch:",epoch)
 
@@ -160,6 +166,8 @@ for j in range(args.tasks):
         print("Train acc, Train loss", train_acc, train_loss)
         print("Test acc, Test loss", test_acc, test_loss)
         print("Test acc, Test loss (Rounded Adj)", test_acc_true, test_loss_true)
+        t2 = time.time()
+        print('Time left for task:',((t2-t1)/60)*(args.epochs-epoch),'minutes')
         print()
 
         if (epoch >= (args.epochs - args.prune_epoch) and args.epochs>args.prune_epoch):
@@ -176,7 +184,7 @@ for j in range(args.tasks):
                 _prune(net,task=j,prune_para=args.prune_para)
                 args.prune_times -= 1
          
-            
+           
     if j==0:
         if args.lr2 == -1:
             args.lr2 = args.lr
