@@ -75,7 +75,7 @@ test_loader = torch.utils.data.DataLoader(dataset=testing, batch_size = 128, shu
 permutations = [torch.Tensor(np.random.permutation(784).astype(np.float64)).long() for _ in range(args.tasks)]
 
 ## model and optimizer instantiations:
-net = ClassifierMLP(image_size = args.im_size, output_shape=10, tasks=50, layer_size=args.hidden_size, bn_boole=True)
+net = ClassifierMLP(image_size = args.im_size, output_shape=10, tasks=args.tasks, layer_size=args.hidden_size, bn_boole=True)
 if gpu_boole:
     net = net.cuda()
 # optimizer = torch.optim.Adam(net.parameters(), lr = 1e-4)
