@@ -221,10 +221,10 @@ class ClassifierMLP(nn.Module):
         self.conv3 = ALinear(layer_size, layer_size, datasets=tasks)
         self.conv4 = ALinear(layer_size, layer_size, datasets=tasks)
         
-        self.bn1 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
-        self.bn2 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
-        self.bn3 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
-        self.bn4 = nn.ModuleList([nn.BatchNorm2d(layer_size) for j in range(tasks)])
+        self.bn1 = nn.ModuleList([nn.BatchNorm1d(layer_size) for j in range(tasks)])
+        self.bn2 = nn.ModuleList([nn.BatchNorm1d(layer_size) for j in range(tasks)])
+        self.bn3 = nn.ModuleList([nn.BatchNorm1d(layer_size) for j in range(tasks)])
+        self.bn4 = nn.ModuleList([nn.BatchNorm1d(layer_size) for j in range(tasks)])
                         
         self.do = nn.Dropout(keep_prob)
         self.relu = nn.ReLU()
