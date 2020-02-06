@@ -142,7 +142,6 @@ for j in range(args.tasks):
             if gpu_boole:
                 x, y = x.cuda(), y.cuda()
                 
-            print(x.shape)
                 
             x = x.view(-1,28*28)[:,permutations[j]]
                 
