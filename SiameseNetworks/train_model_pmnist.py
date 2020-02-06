@@ -142,6 +142,8 @@ for j in range(args.tasks):
             if gpu_boole:
                 x, y = x.cuda(), y.cuda()
                 
+            print(x.shape)
+                
             x = x.view(-1,28*28)[:,permutations[j]]
                 
             y = y.view(-1)
@@ -183,7 +185,7 @@ for j in range(args.tasks):
                 print("Pruning...")
                 _prune(net,task=j,prune_para=args.prune_para)
                 args.prune_times -= 1
-         
+    
            
     if j==0:
         if args.lr2 == -1:
@@ -239,4 +241,6 @@ for j in range(args.tasks):
     print("Total test acc:",total_test_acc)
     print("--------------------------------")
     print()
+    print("Saving model...")
+    torch.save(net,'model_task_%d'%j+'.pt')
 
