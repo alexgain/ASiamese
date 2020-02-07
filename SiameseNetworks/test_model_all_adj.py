@@ -56,7 +56,7 @@ if gpu_boole:
 ## train, test eval:
 loss_metric = torch.nn.CrossEntropyLoss()
 
-def dataset_eval(data_loader, verbose = 1, task = 0, round_=False):
+def dataset_eval(data_loader, verbose = 1, task = 0, round_=False, perm = -1):
     correct = 0
     total = 0
     loss_sum = 0
@@ -64,7 +64,10 @@ def dataset_eval(data_loader, verbose = 1, task = 0, round_=False):
         if gpu_boole:
             images, labels = images.cuda(), labels.cuda()
         
-        images = images.view(-1,28*28)[:,permutations[task]]
+        if perm == -1:
+            images = images.view(-1,28*28)[:,permutations[task]]
+        else:
+            images = images.view(-1,28*28)[:,permutations[perm]]
         # images = images.view(-1, 28*28)
         labels = labels.view(-1).cpu()
         outputs = net(images, task = task, round_=round_).cpu()
@@ -164,3 +167,25 @@ print("--------------------------------")
 print()
 # print("Saving model...")
 # torch.save(net,'model_task_%d'%j+'2.pt')
+
+
+print("--------------------------------")
+print("Test acc for all tasks (i,j):")
+for j1 in range(8):
+    for j2 in range(8):
+        print("Task",j1,"tested on Adj",j2)
+        test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2, perm=j1)
+        print("Test acc, Test loss:",test_acc, test_loss)
+    
+        test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2, round_=True, perm=j1)
+        print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
+        
+        total_test_acc += test_acc
+    
+    total_test_acc /= 8
+    print("Total test acc:",total_test_acc)
+    print("--------------------------------")
+    print()
+
+
+
