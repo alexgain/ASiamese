@@ -171,6 +171,10 @@ print()
 
 print("--------------------------------")
 print("Test acc for all tasks (i,j):")
+
+accV = np.array([97.99, 96.95, 96.57, 97.14, 96.98, 96.91, 96.73, 96.71])
+
+task_specific_acc = np.zeros(8,8)
 for j1 in range(8):
     for j2 in range(8):
         print("Task",j1,"tested on Adj",j2)
@@ -180,6 +184,10 @@ for j1 in range(8):
         test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2, round_=True, perm=j1)
         print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
         
+        task_specific_acc[j1,j2]=test_acc
+        if j1 == j2:
+            task_specific_acc[j1,j2] = accV[j1]
+        
         total_test_acc += test_acc
     
     total_test_acc /= 8
@@ -188,4 +196,5 @@ for j1 in range(8):
     print()
 
 
-
+print(task_specific_acc)
+np.save('task_matrix.npy',task_specific_acc)
