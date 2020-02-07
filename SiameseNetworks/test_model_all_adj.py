@@ -141,8 +141,8 @@ total_test_acc /= 8
 print("Total test acc:",total_test_acc)
 print("--------------------------------")
 print()
-print("Saving model...")
-torch.save(net,'model_task_%d'%j+'2.pt')
+# print("Saving model...")
+# torch.save(net,'model_task_%d'%j+'2.pt')
 
 
 print("--------------------------------")
@@ -162,5 +162,5 @@ total_test_acc /= 8
 print("Total test acc:",total_test_acc)
 print("--------------------------------")
 print()
-print("Saving model...")
-torch.save(net,'model_task_%d'%j+'2.pt')
+# print("Saving model...")
+# torch.save(net,'model_task_%d'%j+'2.pt')
