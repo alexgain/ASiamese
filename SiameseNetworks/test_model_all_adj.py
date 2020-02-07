@@ -174,10 +174,10 @@ print("Test acc for all tasks (i,j):")
 for j1 in range(8):
     for j2 in range(8):
         print("Task",j1,"tested on Adj",j2)
-        test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2, perm=j1)
+        test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2, perm=j1)
         print("Test acc, Test loss:",test_acc, test_loss)
     
-        test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2, round_=True, perm=j1)
+        test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2, round_=True, perm=j1)
         print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
         
         total_test_acc += test_acc
