@@ -28,7 +28,7 @@ gpu_boole = torch.cuda.is_available()
 
 
 train_data_aug = Compose([
-    Resize(size = args.im_size),
+    Resize(size = 28),
     RandomApply(
         [RandomAffine(degrees=(-10, 10), scale=(0.8, 1.2), translate=(0.05, 0.05))],
         p=0.5
@@ -37,7 +37,7 @@ train_data_aug = Compose([
 ])
 
 test_data_aug = Compose([
-    Resize(size = args.im_size),
+    Resize(size = 28),
     ToTensor()
 ])
 
