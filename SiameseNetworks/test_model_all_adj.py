@@ -191,7 +191,7 @@ for j1 in range(8):
         # total_test_acc += test_acc
     
     # total_test_acc /= 8
-    print("Total test acc:",total_test_acc)
+    # print("Total test acc:",total_test_acc)
     print("--------------------------------")
     print()
 
