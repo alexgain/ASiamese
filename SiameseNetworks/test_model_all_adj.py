@@ -137,7 +137,7 @@ for j2 in range(8):
     
     total_test_acc += test_acc
 
-total_test_acc /= j+1
+total_test_acc /= 8
 print("Total test acc:",total_test_acc)
 print("--------------------------------")
 print()
@@ -158,7 +158,7 @@ for j2 in range(8):
     
     total_test_acc += test_acc
 
-total_test_acc /= j+1
+total_test_acc /= 8
 print("Total test acc:",total_test_acc)
 print("--------------------------------")
 print()
