@@ -103,7 +103,7 @@ def dataset_eval_ens(data_loader, verbose = 1, task = 0, round_=False):
         outputs = []
         for k2 in range(8):
             outputs.append(net(images, task = k2, round_=round_).cpu())
-        outputs = torch.stack(outputs).mean(dim=0)
+        outputs = torch.stack(outputs).max(dim=0)[0]
         _, predicted = torch.max(outputs.cpu().data, 1)
         total += labels.size(0)
         correct += (predicted.float() == labels.float()).sum().cpu().data.numpy().item()
