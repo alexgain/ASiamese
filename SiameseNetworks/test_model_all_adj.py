@@ -127,46 +127,46 @@ def dataset_eval_ens(data_loader, verbose = 1, task = 0, round_=False):
     return acc, loss
 
 
-print("--------------------------------")
-print("Test acc for all tasks:")
-total_test_acc = 0
-for j2 in range(8):
-    print("Task:",j2)
-    test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2)
-    print("Test acc, Test loss:",test_acc, test_loss)
+# print("--------------------------------")
+# print("Test acc for all tasks:")
+# total_test_acc = 0
+# for j2 in range(8):
+#     print("Task:",j2)
+#     test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2)
+#     print("Test acc, Test loss:",test_acc, test_loss)
 
-    test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2, round_=True)
-    print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
+#     test_acc, test_loss = dataset_eval(test_loader, verbose = 0, task = j2, round_=True)
+#     print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
     
-    total_test_acc += test_acc
+#     total_test_acc += test_acc
 
-total_test_acc /= 8
-print("Total test acc:",total_test_acc)
-print("--------------------------------")
-print()
-# print("Saving model...")
-# torch.save(net,'model_task_%d'%j+'2.pt')
+# total_test_acc /= 8
+# print("Total test acc:",total_test_acc)
+# print("--------------------------------")
+# print()
+# # print("Saving model...")
+# # torch.save(net,'model_task_%d'%j+'2.pt')
 
 
-print("--------------------------------")
-print("Test acc for all tasks (ens):")
-total_test_acc = 0
-for j2 in range(8):
-    print("Task:",j2)
-    test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2)
-    print("Test acc, Test loss:",test_acc, test_loss)
+# print("--------------------------------")
+# print("Test acc for all tasks (ens):")
+# total_test_acc = 0
+# for j2 in range(8):
+#     print("Task:",j2)
+#     test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2)
+#     print("Test acc, Test loss:",test_acc, test_loss)
 
-    test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2, round_=True)
-    print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
+#     test_acc, test_loss = dataset_eval_ens(test_loader, verbose = 0, task = j2, round_=True)
+#     print("Test acc, Test loss: (Rounded Adj)",test_acc, test_loss)
     
-    total_test_acc += test_acc
+#     total_test_acc += test_acc
 
-total_test_acc /= 8
-print("Total test acc:",total_test_acc)
-print("--------------------------------")
-print()
-# print("Saving model...")
-# torch.save(net,'model_task_%d'%j+'2.pt')
+# total_test_acc /= 8
+# print("Total test acc:",total_test_acc)
+# print("--------------------------------")
+# print()
+# # print("Saving model...")
+# # torch.save(net,'model_task_%d'%j+'2.pt')
 
 
 print("--------------------------------")
@@ -174,7 +174,7 @@ print("Test acc for all tasks (i,j):")
 
 accV = np.array([97.99, 96.95, 96.57, 97.14, 96.98, 96.91, 96.73, 96.71])
 
-task_specific_acc = np.zeros(8,8)
+task_specific_acc = np.zeros([8,8])
 for j1 in range(8):
     for j2 in range(8):
         print("Task",j1,"tested on Adj",j2)
